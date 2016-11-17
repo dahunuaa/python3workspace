@@ -1,0 +1,10 @@
+# EMAIL CONFIG
+
+###smtp配置
+smtp : {
+    host: '192.168.1.98'
+    user: 'cloudrent@donghuicredit.com'
+    password: cloudrent
+    duration: 30
+    tls: True
+}
