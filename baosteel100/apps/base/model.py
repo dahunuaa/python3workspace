@@ -5,16 +5,17 @@
     date : 2016-10-14
 """
 
-import projects.libs.mongolib as mongo
-import projects.libs.utils as utils
+import baosteel100.libs.mongolib as mongo
+import baosteel100.libs.utils as utils
 import sys
 import inspect
 import traceback
 
 from bson.son import SON
-from projects.libs.datatypelib import StrDT, DataTypeError, DatetimeDT
-from projects.libs.configlib import Config, ConfigList
-from projects.libs.options import config as base_config
+from baosteel100.libs.datatypelib import StrDT, DataTypeError, DatetimeDT
+from baosteel100.libs.configlib import Config, ConfigList
+from baosteel100.libs.options import config as base_config
+from bson import ObjectId
 
 
 class Singleton(object):
@@ -56,6 +57,9 @@ class BaseModel(object):
     def remove_argument(self, key):
         if key in self._arguments.keys():
             del self._arguments[key]
+
+    def clear_argument(self):
+        self._arguments = {}
 
     def coll_name(self):
         name_array = self._coll_name.split('.')
@@ -109,7 +113,7 @@ class BaseModel(object):
         try:
             app_name = model_name.split(".")[0]
             model_classname = model_name.split(".")[1]
-            model_name = 'projects.apps.%s.model' % (app_name)
+            model_name = 'baosteel100.apps.%s.model' % (app_name)
             __import__(model_name)
             model_obj = sys.modules[model_name]
             models = inspect.getmembers(model_obj, inspect.isclass)
@@ -139,6 +143,16 @@ class StandCURDModel(BaseModel):
 
         super(StandCURDModel, self).__init__()
 
+    def prepare(self,model):
+        if isinstance(model,StandCURDModel):
+            preset_columns = self.get_preset_columns()
+            for (k,v) in model._arguments.items():
+                if k in preset_columns:
+                    self.set_argument(k,v)
+            self.parse_column()
+        else:
+            raise TypeError("不是合法的Model")
+
     def dump(self, object, filter=None):
         '''
         格式化输出
@@ -150,6 +164,10 @@ class StandCURDModel(BaseModel):
             filter = self.protect_columns
         return utils.dump(object, filter)
 
+    def get_preset_columns(self):
+        return  ['add_user_id', 'last_updated_user_id', 'delete_user_id', 'add_time', 'last_updated_time',
+                              'system']
+
     def parse_column(self):
         if len(self._columns) == 0:
             self.columns = {}
@@ -160,8 +178,8 @@ class StandCURDModel(BaseModel):
                 else:
                     self.columns[c] = StrDT()
 
-            preset_columns = ['add_user_id', 'last_updated_user_id', 'delete_user_id', 'add_time', 'last_updated_time',
-                              'system']
+            preset_columns = self.get_preset_columns()
+
             for p in preset_columns:
                 if p not in self.columns.keys():
                     if p.endswith("user_id") or p in ['system']:
@@ -179,7 +197,7 @@ class StandCURDModel(BaseModel):
         if key in self.columns.keys():
             datatype = self.columns[key]
             if datatype.required == True:
-                if key not in self._arguments:
+                if key not in self._arguments.keys():
                     raise ValueError(u"参数[%s]是必填参数" % key)
                 else:
                     try:
@@ -187,16 +205,25 @@ class StandCURDModel(BaseModel):
                     except DataTypeError as e:
                         raise Exception(u"参数[%s]传入错误:%s" % (key, str(e)))
             else:
-                if key in self._arguments:
+                if key in self._arguments.keys():
                     try:
                         return datatype.validate(self._arguments[key])
                     except DataTypeError as e:
                         raise Exception(u"参数[%s]传入错误:%s" % (key, str(e)))
-            return self._arguments.get(key, self.columns[key].default)
+            # return self._arguments.get(key, self.columns[key].default)
+            try:
+                return datatype.validate(self.columns[key].default)
+            except BaseException as e:
+                raise ValueError((u"默认参数[%s]类型传入错误:[%s]" % (key,str(e))))
         else:
             return self._arguments.get(key, default)
 
+    def get_id(self):
+        return self.get_argument("_id")
+
     def set_id(self, id):
+        if isinstance(id,ObjectId):
+            id = utils.objectid_str(id)
         self.set_argument("_id", id)
 
     # 验证函数，做继承用
@@ -220,6 +247,8 @@ class StandCURDModel(BaseModel):
                 object[k] = v
                 if "access_token" in object:
                     del object['access_token']
+                if "_ids" in object:
+                    del object['_ids']
             else:
                 if k in self.columns.keys():
                     datatype = self.columns[k]
@@ -260,7 +289,13 @@ class StandCURDModel(BaseModel):
         return object
 
     # 根据_id获取对象
-    def fetch(self):
+    def fetch(self, _id):
+        if _id is None or _id == '':
+            return None
+        
+        if isinstance(_id,ObjectId):
+            _id = utils.objectid_str(_id)
+        self.set_id(_id)
         object = self.list()[0]
         if len(object) == 0:
             raise ValueError(u"未找到指定的元素,id为[%s]" % self.get_argument("_id"))
@@ -268,7 +303,7 @@ class StandCURDModel(BaseModel):
 
     # 根据_id获取对象
     def _get_from_id(self, update=False):
-        object = self.list(update=update,origin=update)
+        object = self.list(update=update, origin=update)
         if len(object) == 0:
             raise ValueError(u"未找到指定的元素,id为[%s]" % self.get_argument("_id"))
         else:
@@ -307,6 +342,9 @@ class StandCURDModel(BaseModel):
     def after_create(self, object):
         return object
 
+    def after_get(self, object):
+        return object
+
     def before_update(self, object):
         _object = self._get_from_id(update=True)
         _object.update(object)
@@ -320,6 +358,9 @@ class StandCURDModel(BaseModel):
 
     def after_delete(self, object):
         return object
+
+    def before_list(self):
+        return None
 
     def create(self, object=None):
         if object is None:
@@ -349,10 +390,12 @@ class StandCURDModel(BaseModel):
         if len(res) == 0:
             res = {}
         else:
+            res = self.after_get(res)
             res = res[0]
         return res
 
     def list(self, query=None, sort=None, pager=None, update=False, origin=False):
+        self.before_list()
         if query is None:
             query = self.query(update)
         if sort is None:
@@ -407,13 +450,14 @@ class StandCURDModel(BaseModel):
         if system is None:
             system = self.get_argument("system")
         _ids = self.get_ids()
-        update = self.get_excepted_list(self.get_format_arguments())
+        object = self.get_format_arguments()
+        update = self.get_excepted_list(object)
 
         if len(_ids) == 0:
             raise ValueError(u"没有传入批量更新的ids")
         if len(update.items()) == 0:
             raise ValueError(u"没有传入批量更新的内容")
-        query = self.query()
+        query = self.query(update=True)
         res = self.coll.update_many(query, {"$set": update}).raw_result
         return utils.dump(res)
 
@@ -427,7 +471,7 @@ class StandCURDModel(BaseModel):
         _ids = self.get_ids()
         if len(_ids) == 0:
             raise ValueError(u"没有传入批量删除的ids")
-        query = self.query()
+        query = self.query(update=True)
         res = self.coll.remove(query)
         return res
 
@@ -569,7 +613,7 @@ class StandCURDModel(BaseModel):
                         print("_id格式错误")
                 elif k == '_ids':
                     try:
-                        result[k] = {"$in": self.get_ids()}
+                        result['_id'] = {"$in": self.get_ids()}
                     except:
                         print("_ids格式错误")
                 # 精确匹配
@@ -624,6 +668,8 @@ class StandCURDModel(BaseModel):
             for e in embed_params:
                 if e in preset_columns:
                     embed_id_param[e] = "user_id"
+                elif e == "parent":
+                    embed_id_param[e] = "%s_id" % self.coll_name()
                 else:
                     embed_id_param[e] = '%s_id' % e
 
@@ -636,8 +682,14 @@ class StandCURDModel(BaseModel):
                         embed_model = BaseModel.get_model(
                             "%s.%sModel" % (embed_modelname, embed_modelname.capitalize()))
                         if embed_model is not None:
-                            embed_model.set_id(_o[k])
-                            _o[k] = embed_model.get()
+                            if isinstance(_o[k + '_id'], list):
+                                _o[k] = []
+                                for _id in _o[k + '_id']:
+                                    embed_model.set_id(_id)
+                                    _o[k].append(embed_model.get())
+                            else:
+                                embed_model.set_id(_o[k + '_id'])
+                                _o[k] = embed_model.get()
                 return _o
             # List类型
             elif type(object) == list:
@@ -651,8 +703,14 @@ class StandCURDModel(BaseModel):
                                 embed_model = BaseModel.get_model(
                                     "%s.%sModel" % (embed_modelname, embed_modelname.capitalize()))
                                 if embed_model is not None:
-                                    embed_model.set_id(_o[k + '_id'])
-                                    _o[k] = embed_model.get()
+                                    if isinstance(_o[k + '_id'],list):
+                                        _o[k] = []
+                                        for _id in _o[k + '_id']:
+                                            embed_model.set_id(_id)
+                                            _o[k].append(embed_model.get())
+                                    else:
+                                        embed_model.set_id(_o[k + '_id'])
+                                        _o[k] = embed_model.get()
                         result.append(_o)
                     else:
                         result.append(o)
@@ -661,7 +719,7 @@ class StandCURDModel(BaseModel):
                 return object
 
     # 分页相关
-    def pager(self):
+    def pager(self,res=None):
         '''
         返回分页相关的信息
         :return: 分页信息
@@ -673,8 +731,9 @@ class StandCURDModel(BaseModel):
         if page is None and page_size is None:
             result['enable'] = False
         else:
-            res = self.coll.aggregate([{"$match": self.query()},
-                                       {"$sort": self.sort()}])
+            if res is None:
+                res = self.coll.aggregate([{"$match": self.query()},
+                                           {"$sort": self.sort()}])
             length = len(utils.dump(res))
             pager = utils.count_page(length, page, page_size)
             result.update(pager)
@@ -684,22 +743,22 @@ class StandCURDModel(BaseModel):
     def get_config(self):
         config_list = []
         try:
-            c = open(utils.get_root_path() + "/apps/%s/config.icfg" % self.coll_name())
+            c = open(utils.get_root_path() + "/apps/%s/config.icfg" % (self.coll_name().split('_')[0]))
             config = Config(c, 'utf-8')
             config.addNamespace(utils)
             config_list.append(config)
-        except:
-            print("模块[%s]未找到配置文件" % (self.coll_name()))
+        except Exception as e:
+            print("模块[%s]未找到配置文件[%s]" % (self.coll_name(),str(e)))
 
         try:
             # bc = open(utils.get_root_path()+"/configs/base.icfg")
             # base_config = Config(bc, 'utf-8')
             # base_config.addNamespace(utils)
             config_list.append(base_config)
-        except:
+        except Exception as e:
             import traceback
             print(traceback.format_exc())
-            print("模块[%s]未找到系统配置" % (self.coll_name()))
+            print("模块[%s]未找到系统配置[%s]" % (self.coll_name(),str(e)))
 
         if len(config_list) == 0:
             raise ValueError("模块[%s]未找到系统配置" % (self.coll_name()))

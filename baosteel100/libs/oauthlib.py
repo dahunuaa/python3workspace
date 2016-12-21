@@ -14,12 +14,12 @@ import oauth2.store.mongodb
 import time
 
 from oauth2.datatype import AccessToken
-from projects.apps.base import model
-from projects.libs import utils
-from projects.libs.options import config
+from baosteel100.apps.base import model
+from baosteel100.libs import utils
+from baosteel100.libs.options import config
 
 # Populate mock
-oauth_client_coll = model.BaseModel.get_model("oauth.OauthClientsModel").coll
+oauth_client_coll = model.BaseModel.get_model("oauth.OauthClientModel").coll
 client_store = oauth2.store.mongodb.ClientStore(oauth_client_coll)
 
 oauth_access_token_coll = model.BaseModel.get_model("oauth.OauthAccessTokenModel").coll

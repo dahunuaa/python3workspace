@@ -22,13 +22,14 @@ import redis
 from concurrent import futures
 import zipfile
 import re
-import projects
-from projects.libs.options import config
+import baosteel100
+from baosteel100.libs.options import config
 import uuid
+import base64
 
 
 def get_root_path():
-    return os.path.dirname(os.path.abspath(projects.__file__))
+    return os.path.dirname(os.path.abspath(baosteel100.__file__))
 
 def find_modules(modules_dir):
     try:
@@ -49,6 +50,12 @@ def md5(str):
     m = hashlib.md5()
     m.update(str.encode())
     return m.hexdigest()
+
+def generate_password(password,loginname):
+    m = hashlib.md5()
+    m.update((password+loginname)).encode()
+    res = m.hexdigest()
+    return res
 
 def get_uuid():
     return uuid.uuid1()
@@ -355,3 +362,14 @@ def check_mobile(mobile):
 def is_chinese(string):
     pattern = re.compile(u'[\u4e00-\u9fa5]+')
     return pattern.search(string)
+
+def str_to_img(uri,string,url = None):
+    if url == None:
+        url = '/static/ftp/image/'+uri
+    img_data = base64.b64decode(string)
+    path_url = get_root_path()+url
+    if not os.path.exists(os.path.dirname(path_url)):
+        os.makedirs(os.path.dirname(path_url))
+    with open(path_url,"wb") as f:
+        f.write(img_data)
+    return url

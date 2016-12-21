@@ -17,12 +17,12 @@ def get_components(type):
 
     for a in apps:
         try:
-            app_path = "%s.apps.%s"%(project_setting.name,a)
-            _handlers.append((app_path,['handlers']))
-            _admin_handlers.append((app_path,['admin']))
-            _models.append((app_path,['admin']))
+            app_path = "%s.apps.%s" % (project_setting.name, a)
+            _handlers.append((app_path, ['handler']))
+            _admin_handlers.append((app_path, ['admin']))
+            _models.append((app_path, ['model']))
         except:
-            logger.error("loading %s error"%app_path)
+            logger.error("loading %s error"% app_path)
             print(utils.format_error)
     try:
         for h in _handlers:

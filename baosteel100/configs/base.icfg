@@ -18,7 +18,7 @@ desc : ""
 scope_roles : ['frontend','backend','admin','root']
 
 #SYSTEM
-systems : ['base','projects','daemon','cloudrent']
+systems : ['base','daemon','cloudrent']
 
 #KEY
 cookie_secret : "ADSDADSDADASDSAD"
@@ -28,6 +28,11 @@ SIGN_KEY : '87B2447B04E5AA93F00C21A5B98F32A0'
 #DEFAUT SETTING
 default_expired_time : 24
 enable_ssl : False
+
+#HEADER SIZE
+max_buffer_size : 1048576 * 50
+max_body_size : 1048576 * 50
+max_header_size : 1048576 * 50
 
 #Page
 page_size : 15

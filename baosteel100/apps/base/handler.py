@@ -26,7 +26,7 @@ from .model import BaseModel
 try:
     import importlib
 except:
-    from projects.libs import importlib
+    from baosteel100.libs import importlib
 
 async_server = AsyncUtils(100)
 
@@ -105,12 +105,17 @@ class BaseHandler(BaseRequestHandler):
 
 
 class BaseAPIHandler(BaseHandler):
+    result = utils.init_response_data()
     def initialize(self):
         super(BaseAPIHandler, self).initialize()
 
     def prepare(self):
         self.vaildate_header()
+        self.result = utils.init_response_data()
         super(BaseAPIHandler, self).prepare()
+
+    def set_result(self, code, e=None):
+        self.result = utils.reset_response_data(0, str(e))
 
     def vaildate_header(self):
         for k, v in self.request.headers.items():
@@ -124,13 +129,16 @@ class BaseAPIHandler(BaseHandler):
 
 
 class APIHandler(BaseAPIHandler):
-    result = utils.init_response_data()
+
     user_id = None
     system = None
     enable_methods = []
 
-    def set_result(self, code, e=None):
-        self.result = utils.reset_response_data(0, str(e))
+    # def initialize(self):
+    #     self.result = utils.init_response_data()
+    #     super(APIHandler, self).initialize()
+
+
 
     def finish(self, chunk=None, notification=None, origin=False, status_code=200):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -164,7 +172,7 @@ class APIHandler(BaseAPIHandler):
             super(APIHandler, self).finish()
         else:
             self.set_header("Content-Type", "application/json; charset=UTF-8")
-            self.set_header("Server", "projects API server/v0.1.0")
+            self.set_header("Server", "baosteel100 API server/v0.1.0")
             super(APIHandler, self).finish(chunk)
 
     def write_error(self, status_code, **kwargs):
@@ -193,7 +201,7 @@ class APIHandler(BaseAPIHandler):
             self.clear()
             self.set_status(200)  # always return 200 OK for API errors
             self.set_header("Content-Type", "application/json; charset=UTF-8")
-            self.set_header("Server", "projects API server/v0.1.0")
+            self.set_header("Server", "baosteel100 API server/v0.1.0")
             self.finish(str(e))
         except Exception:
             logging.error(traceback.format_exc())
@@ -222,20 +230,26 @@ class TokenHandler(BaseAPIHandler):
                 token = auth_header
             scope_model = BaseModel.get_model("scope.ScopeModel")
             role = self.provider.grant_types[0].default_scope
+
             scopes = [s['name'] for s in scope_model.get_allow_scopes(role)]
             token = validate_token(token, scopes)
             self.user_id = token['user_id']
             scope_coll = scope_model.coll
             scope = scope_coll.find_one({"name":token['scopes'][0]})
+            if "superuser" in scope["roles"]:
+                self.private = False
             self.system = scope['system']
+            self.scope = scope
             self.scopes = scopes
-            if self.private and scope['roles'] == ['frontend']:
+            # if self.private and scope['roles'] == ['frontend']:
+            if self.private:
                 self.model.set_extend_querys({"add_user_id":self.user_id })
         except Exception as err:
             self.set_header('Content-Type', 'application/json')
-            self.set_status(401)
+            self.set_status(utils.get_status_code(err))
             result = utils.reset_response_data(0, str(err))
-            self.finish(result, status_code=401)
+            # self.finish({"meta":{"code":401},"response":result})
+            self.finish(result,status_code=utils.get_status_code(err))
 
 
 class ErrorHandler(BaseAPIHandler):
@@ -461,5 +475,6 @@ class MultiStandardHandler(APIHandler):
             self.result['data'] = self.model.delete_many()
         else:
             raise NotImplementedError(u"暂无此操作")
+
     def _options(self):
         self.result['data'] = self.model.config()

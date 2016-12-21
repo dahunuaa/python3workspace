@@ -8,8 +8,8 @@ import os
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
-from projects.libs.options import config
-from projects.libs import utils
+from baosteel100.libs.options import config
+from baosteel100.libs import utils
 
 def run_ftp():
     # Instantiate a dummy authorizer for managing 'virtual' users
