@@ -22,14 +22,14 @@ import redis
 from concurrent import futures
 import zipfile
 import re
-import projects
-from projects.libs.options import config
+import baosteel100
+from baosteel100.libs.options import config
 import uuid
-from projects.libs import const
+from baosteel100.libs import const
 
 
 def get_root_path():
-    return os.path.dirname(os.path.abspath(projects.__file__))
+    return os.path.dirname(os.path.abspath(baosteel100.__file__))
 
 
 def find_modules(modules_dir):

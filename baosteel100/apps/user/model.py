@@ -14,10 +14,9 @@ class UserModel(model.StandCURDModel):
         ("password",StrDT()),
         ("role",ListDT()),
         ("name",StrDT()),
-        ("permission",StrDT(default="normal")),
         ("email",StrDT()),
         ("login_time",DatetimeDT(default=utils.get_now())),
-        ("scope",StrDT())
+        ("scope",StrDT(default="normal"))
     ]
 
     _default_redirect_url = None
@@ -32,20 +31,20 @@ class UserModel(model.StandCURDModel):
             user={
                 "enable_flag": 1,
                 "mobile": "admin",
-                "password": "3e50b4886e092bceaba34e449e6d8337",
+                "password": "e10adc3949ba59abbe56e057f20f883e",
                 "email": None,
-                "login_name": "Admin",
+                "login_name": "admin",
                 "login_time": utils.get_now(),
                 "role": [
 
                 ],
                 "add_time": utils.get_now(),
                 "id_card": None,
-                "name": "Admin",
-                "scope": "superuser"
+                "name": "admin",
+                "scope": "admin"
             }
             self.coll.save(user)
-            self._oauth2_register(utils.objectid_str(user['_id']),'3e50b4886e092bceaba34e449e6d8337')
+            self._oauth2_register(utils.objectid_str(user['_id']),'e10adc3949ba59abbe56e057f20f883e')
 
     #生成用户
     def new(self):
@@ -105,16 +104,16 @@ class UserModel(model.StandCURDModel):
 
 
 
-    def login(self,username,password,system):
+    def login(self,username,password):
         if username is None or password is None:
             raise ValueError(u"用户或密码为空")
-        user = self.coll.find_one({"name":username,"password":utils.generate_password(password,username),"system":system,"enable_flag":1})
+        a=utils.generate_password(password,username)
+        user = self.coll.find_one({"name":username,"password":utils.generate_password(password,username),"enable_flag":1})
         if user is None:
             raise ValueError(u"用户名或密码错误")
         user['login_time']=utils.get_now()
         self.coll.save(user)
-        user['auth'] = self.get_user_info(utils.objectid_str(user['_id']))['scope']
-        scope = self.get_user_info(utils.objectid_str(user['_id']))['scope']['scope']
+        scope = user['scope']
         user['token'] = self.get_oauth2_token(utils.objectid_str(user['_id']), scope)
         suffixs = ""
         pattern = re.compile(r'@\w+$')
@@ -125,43 +124,6 @@ class UserModel(model.StandCURDModel):
         user['suffix'] = suffixs
         del user['password']
         return utils.dump(user)
-
-    def get_user_info(self, user_id):
-        user = self.get_one(user_id)
-        scope = self.get_scope(user_id)
-        if scope is not None:
-            user['scope'] = scope
-        else:
-            res = {"value": user['scope'], "scope":user['scope'],"expired_time": None, "redirect_url": self.get_default_redirect_url(),
-                   "address": {}}
-            user['scope'] = res
-        del user['password']
-        return utils.dump(user)
-
-    def get_scope(self, user_id):
-        auth_model = model.BaseModel.get_model("auth.AuthModel")
-        try:
-            auth = auth_model.get_scopes(user_id)
-            admin_url = auth.get("admin_url", self.get_default_admin_url())
-            if type(admin_url) == str:
-                admin_url = json.loads(admin_url)
-
-            res = {"value": auth['bank_account_name'],
-                   "scope":auth['scopes'],
-                   "expired_time": auth['expires_at'],
-                   "redirect_url": auth.get("redirect_url", self.get_default_redirect_url()),
-                   "address": {
-                       "province": auth.get("office_province", ""),
-                       "city": auth.get("office_city", ""),
-                       "area": auth.get("office_area", ""),
-                       "detail_address": auth.get("office_detail_address", ""),
-                       "address": auth.get("address", ""),
-                   },
-                   "admin_url": admin_url
-                   }
-            return utils.dump(res)
-        except Exception as e:
-            return None
 
     #获取角色
     def _get_role(self):

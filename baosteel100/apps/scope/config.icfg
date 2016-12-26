@@ -12,10 +12,10 @@ init_scope:{
         },
 "backend":{
         "name":"backend",
-        "roles":['user','user_admin']
+        "roles":['user']
         },
 "admin":{
         "name":"admin",
-        "roles":['superuser','scope','normal','user','user_admin']
+        "roles":['superuser','user','user_admin']
         }
   }

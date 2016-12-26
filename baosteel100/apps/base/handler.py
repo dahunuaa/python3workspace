@@ -131,7 +131,6 @@ class BaseAPIHandler(BaseHandler):
 class APIHandler(BaseAPIHandler):
 
     user_id = None
-    system = None
     enable_methods = []
 
     # def initialize(self):
@@ -211,7 +210,6 @@ class APIHandler(BaseAPIHandler):
 # 带加密字段的处理器
 class TokenHandler(BaseAPIHandler):
     user_id = ""
-    system = None
     private = True
 
     def initialize(self, provider):
@@ -238,7 +236,6 @@ class TokenHandler(BaseAPIHandler):
             scope = scope_coll.find_one({"name":token['scopes'][0]})
             if "superuser" in scope["roles"]:
                 self.private = False
-            self.system = scope['system']
             self.scope = scope
             self.scopes = scopes
             # if self.private and scope['roles'] == ['frontend']:
@@ -287,8 +284,6 @@ class SingleStandardHanler(APIHandler):
         try:
             self.model.set_request(self.request)
             self.model.set_id(_id)
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._get)
         except Exception as e:
             self.set_result(0, str(e))
@@ -303,8 +298,6 @@ class SingleStandardHanler(APIHandler):
             self.model.set_id(_id)
             self.model.set_argument("last_updated_user_id", self.user_id)
             self.model.set_argument("last_updated_time", utils.get_now())
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._put)
         except Exception as e:
             self.set_result(0, str(e))
@@ -318,8 +311,6 @@ class SingleStandardHanler(APIHandler):
             self.model.set_request(self.request)
             self.model.set_id(_id)
             self.model.set_argument("add_user_id", self.user_id)
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._post)
         except Exception as e:
             self.set_result(0, str(e))
@@ -333,8 +324,6 @@ class SingleStandardHanler(APIHandler):
             self.model.set_request(self.request)
             self.model.set_id(_id)
             self.model.set_argument("delete_user_id", self.user_id)
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._delete)
         except Exception as e:
             self.set_result(0, str(e))
@@ -347,8 +336,6 @@ class SingleStandardHanler(APIHandler):
         try:
             self.model.set_request(self.request)
             self.model.set_id(_id)
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._options)
         except Exception as e:
             self.set_result(0, str(e))
@@ -385,8 +372,6 @@ class MultiStandardHandler(APIHandler):
     def get(self):
         try:
             self.model.set_request(self.request)
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._get)
         except Exception as e:
             self.set_result(0, str(e))
@@ -402,8 +387,6 @@ class MultiStandardHandler(APIHandler):
             self.model.set_argument("add_time", utils.get_now())
             self.model.set_argument("last_updated_time", utils.get_now())
             self.model.set_argument("last_updated_user_id", "")
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._post)
         except Exception as e:
             self.set_result(0, str(e))
@@ -417,8 +400,6 @@ class MultiStandardHandler(APIHandler):
             self.model.set_request(self.request)
             self.model.set_argument("last_updated_user_id", self.user_id)
             self.model.set_argument("last_updated_time", utils.get_now())
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._put)
         except Exception as e:
             self.set_result(0, str(e))
@@ -431,8 +412,6 @@ class MultiStandardHandler(APIHandler):
         try:
             self.model.set_request(self.request)
             self.model.set_argument("delete_user_id", self.user_id)
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._delete)
         except Exception as e:
             self.set_result(0, str(e))
@@ -444,8 +423,6 @@ class MultiStandardHandler(APIHandler):
     def options(self):
         try:
             self.model.set_request(self.request)
-            if self.model.get_argument("system",'') == '':
-                self.model.set_argument("system", self.system)
             yield async_server.cmd(self._options)
         except Exception as e:
             self.set_result(0, str(e))

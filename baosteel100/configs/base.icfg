@@ -1,6 +1,6 @@
 # BASE CONFIG
 #Basic
-domain : "www.cloudrent.com"
+domain : "www.baosteel.com"
 port : "8503"
 debug : False
 compress_response : True
@@ -15,10 +15,8 @@ version : "0.1.0"
 desc : ""
 
 #SCOPES
-scope_roles : ['frontend','backend','admin','root']
+scope_roles : ['frontend','backend','admin']
 
-#SYSTEM
-systems : ['base','daemon','cloudrent']
 
 #KEY
 cookie_secret : "ADSDADSDADASDSAD"

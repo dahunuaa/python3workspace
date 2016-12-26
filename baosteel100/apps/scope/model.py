@@ -77,6 +77,18 @@ class ScopeModel(model.StandCURDModel):
             raise ValueError(u"Scope[%s]已存在"%name)
         return object
 
+    def get_allow_scopes(self, rolename):
+        scopes = self.coll.aggregate([
+            {"$unwind": "$roles"},
+            {"$match": {"roles": rolename, "enable_flag": 1}},
+            {"$project": {"name": "$name"}},
+        ])
+        return utils.dump(scopes)
+
+    def get_all_scopes(self):
+        scopes = self.coll.find({"enable_flag": 1})
+        return utils.dump(scopes)
+
 
 
 

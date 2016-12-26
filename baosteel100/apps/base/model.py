@@ -166,7 +166,7 @@ class StandCURDModel(BaseModel):
 
     def get_preset_columns(self):
         return  ['add_user_id', 'last_updated_user_id', 'delete_user_id', 'add_time', 'last_updated_time',
-                              'system']
+                             ]
 
     def parse_column(self):
         if len(self._columns) == 0:
@@ -182,7 +182,7 @@ class StandCURDModel(BaseModel):
 
             for p in preset_columns:
                 if p not in self.columns.keys():
-                    if p.endswith("user_id") or p in ['system']:
+                    if p.endswith("user_id"):
                         self.columns[p] = StrDT()
                     elif p.endswith("time"):
                         self.columns[p] = DatetimeDT()
@@ -310,7 +310,7 @@ class StandCURDModel(BaseModel):
             return object[0]
 
     # 获取对象
-    def get_one(self, value, column='_id', is_objectid=True, system=None):
+    def get_one(self, value, column='_id', is_objectid=True):
         '''
         获取元素
         :param value: 元素内容
@@ -323,9 +323,6 @@ class StandCURDModel(BaseModel):
                 query = {column: utils.create_objectid(value)}
             else:
                 query = {column: value}
-
-            if system is not None and system != '':
-                query['system'] = system
 
             items = self.get_coll().find_one(query)
         except:
@@ -442,13 +439,11 @@ class StandCURDModel(BaseModel):
                 raise ValueError(u"传入的_ids[%s]格式有误" % _ids)
         return res
 
-    def update_many(self, system=None):
+    def update_many(self):
         '''
         批量更新 如果传入参数有_ids则进行筛选更新操作
         :return: 'success' or Exception
         '''
-        if system is None:
-            system = self.get_argument("system")
         _ids = self.get_ids()
         object = self.get_format_arguments()
         update = self.get_excepted_list(object)
@@ -461,13 +456,11 @@ class StandCURDModel(BaseModel):
         res = self.coll.update_many(query, {"$set": update}).raw_result
         return utils.dump(res)
 
-    def delete_many(self, system=None):
+    def delete_many(self):
         '''
         批量删除 如果传入参数有_ids则进行筛选删除操作，如果没有传，则根据传入的筛选参数进行筛选删除
         :return: 'success' or Exception
         '''
-        if system is None:
-            system = self.get_argument("system")
         _ids = self.get_ids()
         if len(_ids) == 0:
             raise ValueError(u"没有传入批量删除的ids")
@@ -532,7 +525,7 @@ class StandCURDModel(BaseModel):
     # 获取筛选排除的字段列表
     def get_excepted_colums(self, new_columns=None):
         if new_columns is None or type(new_columns) != list:
-            return ['s', 'fields', 'access_token', 'embed', 'page', 'page_size', 'system']
+            return ['s', 'fields', 'access_token', 'embed', 'page', 'page_size']
         else:
             return new_columns
 
@@ -637,9 +630,6 @@ class StandCURDModel(BaseModel):
         else:
             res = query
 
-        system = self.get_argument("system", None)
-        if system is not None and system != '':
-            res['system'] = system
         if extend_query is None:
             extend_query = self.extend_querys
         if extend_query is not None:

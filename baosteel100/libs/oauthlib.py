@@ -33,7 +33,7 @@ token_generator = oauth2.tokengenerator.Uuid4()
 token_generator.expires_in[oauth2.grant.ClientCredentialsGrant.grant_type] = 3600 * config.default_expired_time
 
 
-def get_provider(role="frontend"):
+def get_provider(role="normal"):
     # OAuth2 controller
     auth_provider = oauth2.Provider(
             access_token_store=token_store,

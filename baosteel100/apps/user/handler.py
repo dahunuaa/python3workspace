@@ -41,15 +41,17 @@ class UserPswResetHandler(MultiStandardHandler):
 
 class UserListHandler(MultiStandardHandler,TokenHandler):
     _model = "user.UserModel"
+    enable_methods = ['get']
 
 class UserHandler(SingleStandardHanler,TokenHandler):
     _model = "user.UserModel"
+    enable_methods = ['get']
 
 
 handlers = [
     (r"/register",UserRegisterHandler),
     (r"/login",UserLoginHandler),
     (r'/psw/reset',UserPswResetHandler),
-    (r"",UserListHandler,get_provider("superuser")),
-    (r"/(.*)",UserHandler,get_provider("superuser"))
+    (r"",UserListHandler,get_provider("user_admin")),
+    (r"/(.*)",UserHandler,get_provider("user_admin"))
 ]
