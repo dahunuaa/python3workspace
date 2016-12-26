@@ -4,7 +4,7 @@ import traceback
 from tornado.web import url
 from baosteel100.libs.loglib import get_logger
 
-logger = get_logger("bootstrape")
+logger = get_logger("bootstrap")
 
 def generate_handler_patterns(root_modules,handler_names,out_handlers,prefix=""):
     for name in handler_names:
@@ -19,10 +19,10 @@ def generate_handler_patterns(root_modules,handler_names,out_handlers,prefix="")
                 _handlers = []
                 for handler in module_handlers:
                     try:
-                        patten = r"/%s/%s%"%(prefix,root_modules.split(".")[-1],handler[0])
+                        patten = r"/%s/%s%s"%(prefix,root_modules.split(".")[-1],handler[0])
                         if len(handler)==2:
-                            _handlers.append(patten,
-                                             handler[1])
+                            _handlers.append((patten,
+                                             handler[1]))
                         elif len(handler)==3:
                             _handlers.append(url(patten,
                                                  handler[1],

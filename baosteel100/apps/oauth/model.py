@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import baosteel100.apps.base.model as model
 
-class OauthClientModel(model.StandCURDModel,model.Singleton):
+class OauthClientsModel(model.StandCURDModel,model.Singleton):
     _coll_name = "oauth_clients"
 
 

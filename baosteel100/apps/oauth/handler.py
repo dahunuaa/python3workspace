@@ -5,13 +5,13 @@ from baosteel100.apps.base.model import BaseModel
 from baosteel100.libs.oauthlib import get_provider
 
 class OauthHandler(MultiStandardHandler,TokenHandler):
-    _model = "oauth.OauthAccessTokenHandler"
+    _model = "oauth.OauthAccessTokenModel"
     enable_methods = ["post"]
 
-    def _post(self):
-        user_model = BaseModel.get_model("user.UserModel")
-        user = user_model.get_user_infor(self.user_id)
-        self.result["data"] = user
+    # def _post(self):
+    #     user_model = BaseModel.get_model("user.UserModel")
+    #     user = user_model.get_user_infor(self.user_id)
+    #     self.result["data"] = user
 
 handlers = [
     (r'',OauthHandler,get_provider('normal')),

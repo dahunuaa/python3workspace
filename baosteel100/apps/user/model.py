@@ -13,6 +13,7 @@ class UserModel(model.StandCURDModel):
         ("mobile",StrDT()),
         ("password",StrDT()),
         ("role",ListDT()),
+        ("name",StrDT()),
         ("permission",StrDT(default="normal")),
         ("email",StrDT()),
         ("login_time",DatetimeDT(default=utils.get_now())),
@@ -22,7 +23,7 @@ class UserModel(model.StandCURDModel):
     _default_redirect_url = None
 
     def __init__(self):
-        self.oauth_coll = model.BaseModel.get_model("oauth.OauthClientModel").get_coll()
+        self.oauth_coll = model.BaseModel.get_model("oauth.OauthClientsModel").get_coll()
         super(UserModel,self).__init__()
 
     def init(self):
@@ -30,8 +31,6 @@ class UserModel(model.StandCURDModel):
         if count ==0:
             user={
                 "enable_flag": 1,
-                "permission": "admin",
-                "system": "base",
                 "mobile": "admin",
                 "password": "3e50b4886e092bceaba34e449e6d8337",
                 "email": None,
@@ -43,7 +42,7 @@ class UserModel(model.StandCURDModel):
                 "add_time": utils.get_now(),
                 "id_card": None,
                 "name": "Admin",
-                "scope": "base_superuser"
+                "scope": "superuser"
             }
             self.coll.save(user)
             self._oauth2_register(utils.objectid_str(user['_id']),'3e50b4886e092bceaba34e449e6d8337')
@@ -53,24 +52,23 @@ class UserModel(model.StandCURDModel):
         user = None
         mobile = self.get_argument("mobile")
         password = utils.generate_password(self.get_argument("password"),mobile)
-        system = self._get_system()
 
         if mobile is None or password is None:
             raise ValueError(u"用户资料不完全")
 
         if mobile is not None:
-            user = self.coll.find_one({"mobile":mobile,"system":system,"enable_flag":1})
+            user = self.coll.find_one({"mobile":mobile,"enable_flag":1})
             if user is not None:
-                raise ValueError(u"改手机号已经注册")
+                raise ValueError(u"该手机号已经注册")
             else:
-                self.get_argument['login_name'] = u"%s****%s"%(mobile[0:3],mobile[-3:])
-                self.set_argument("system",system)
+                self._arguments['login_name'] = u"%s****%s"%(mobile[0:3],mobile[-3:])
                 user=self._create()
         if user is None:
             raise ValueError(u"用户创建失败")
         return utils.dump(user)
 
     def _create(self,user=None):
+
         if user is None:
             user = self._new()
 
@@ -105,16 +103,7 @@ class UserModel(model.StandCURDModel):
                                   'redirect_uris':[],
                                   'authorized_grants':[oauth2.grant.ClientCredentialsGrant.grant_type]})
 
-    #获取系统
-    def _get_system(self,scope = None):
-        scope_coll = model.BaseModel.get_model("scope.ScopeModel").coll
-        if scope is None:
-            scope = self.get_argument("scope")
-        _s = scope_coll.find_one({"name":scope})
-        if _s is None:
-            raise ValueError(u"不允许的用户类型")
-        else:
-            return _s['system']
+
 
     def login(self,username,password,system):
         if username is None or password is None:

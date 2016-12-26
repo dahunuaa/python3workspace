@@ -8,7 +8,7 @@ logger = get_logger("debug")
 
 class UserRegisterHandler(MultiStandardHandler):
     _model = "user.UserModel"
-    enable_methods = ["post"]
+    enable_methods = ['post']
 
     def _post(self):
         res = self.model.new()

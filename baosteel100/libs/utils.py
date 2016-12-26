@@ -3,7 +3,7 @@
 # @author: Daemon Wang
 # Created on 2016-03-02
 #
-
+import base64
 import os
 import random
 import time
@@ -22,14 +22,15 @@ import redis
 from concurrent import futures
 import zipfile
 import re
-import baosteel100
-from baosteel100.libs.options import config
+import projects
+from projects.libs.options import config
 import uuid
-import base64
+from projects.libs import const
 
 
 def get_root_path():
-    return os.path.dirname(os.path.abspath(baosteel100.__file__))
+    return os.path.dirname(os.path.abspath(projects.__file__))
+
 
 def find_modules(modules_dir):
     try:
@@ -53,12 +54,14 @@ def md5(str):
 
 def generate_password(password,loginname):
     m = hashlib.md5()
-    m.update((password+loginname)).encode()
+    m.update((password+loginname).encode())
     res = m.hexdigest()
     return res
 
+
 def get_uuid():
     return uuid.uuid1()
+
 
 def get_current_time(format_type='datetime'):
     if format_type == 'datetime':
@@ -123,9 +126,11 @@ def get_utc_now():
 def get_now():
     return datetime.datetime.now()
 
+
 # 生成0000-00-00时间
 def get_default_time():
-    return datetime.datetime(1,1,1,0,0,0)
+    return datetime.datetime(1, 1, 1, 0, 0, 0)
+
 
 # 生成objectid
 def create_objectid(str=None):
@@ -144,9 +149,6 @@ def objectid_str(objectid):
 # 格式化错误信息
 def format_error():
     return traceback.format_exc()
-
-
-
 
 
 def str_md5_hex(val):
@@ -187,7 +189,8 @@ def count_page(length, page, page_size=15, page_show=10):
         "skip": skip,
         "page": page,
         "enable": True,
-        "has_more": has_more
+        "has_more": has_more,
+        "length": length
     }
     return pager
 
@@ -246,7 +249,7 @@ def init_response_data():
 
 
 def reset_response_data(code, e=None):
-    print(format_error())
+    # print(format_error())
     result = init_response_data()
     if code == 1:
         result["return_code"] = "success"
@@ -274,7 +277,8 @@ def dump(str, filter=[]):
                     elif type(v) == type(ObjectId()):
                         s[k] = json.loads(dumps(v))['$oid']
                     elif type(v) == type(datetime.datetime.utcnow()):
-                        s[k] = v.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+                        # s[k] = v.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+                        s[k] = v.strftime("%Y-%m-%d %H:%M:%S")
                     else:
                         s[k] = v
             else:
@@ -359,17 +363,50 @@ def check_email(email):
 def check_mobile(mobile):
     return re.match("^1\d{10}$", mobile) is not None
 
+
 def is_chinese(string):
     pattern = re.compile(u'[\u4e00-\u9fa5]+')
     return pattern.search(string)
 
-def str_to_img(uri,string,url = None):
+
+def str_to_img(uri, string, url=None):
     if url == None:
-        url = '/static/ftp/image/'+uri
+        url = '/static/ftp/image/' + uri
+
+    # string = string.replace("data:image/jpeg;base64,","")
+    # missing_padding = 4 - len(string) % 4
+    # if missing_padding:
+    #     string += '=' * missing_padding
     img_data = base64.b64decode(string)
-    path_url = get_root_path()+url
+    path_url = get_root_path() + url
     if not os.path.exists(os.path.dirname(path_url)):
         os.makedirs(os.path.dirname(path_url))
-    with open(path_url,"wb") as f:
-        f.write(img_data)
+    f = open(path_url, "wb")
+    f.write(img_data)
+    f.close()
     return url
+
+def compare_time(dt1, dt2):
+    if dt1 > dt2:
+        raise Exception("开始时间不能大于结束时间！")
+    else:
+        return True
+
+def get_consts(consts_name,value):
+    key = value['value']
+    try:
+        consts_list = const.get(consts_name)
+        for c in consts_list:
+            if c[1] == key:
+                return c[0]
+        raise ValueError("不存在相应的键值[%s]"%value)
+    except ValueError as e:
+        raise Exception(e)
+    except:
+        raise Exception("常量[%s]不存在"%consts_name)
+
+def get_status_code(err=None):
+    if str(err) == "Permission denied":
+        return 403
+    else:
+        return 401
