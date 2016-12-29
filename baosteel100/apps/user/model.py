@@ -12,7 +12,7 @@ class UserModel(model.StandCURDModel):
         ("login_name",StrDT()),
         ("mobile",StrDT()),
         ("password",StrDT()),
-        # ("role",ListDT()),
+        ("role",ListDT()),
         ("name",StrDT()),
         ("email",StrDT()),
         ("login_time",DatetimeDT(default=utils.get_now())),
@@ -31,7 +31,7 @@ class UserModel(model.StandCURDModel):
             user={
                 "enable_flag": 1,
                 "mobile": "admin",
-                "password": "2a4dfbc8f1267f04a8b0c5ddeb975a63",
+                "password": "e10adc3949ba59abbe56e057f20f883e",
                 "email": None,
                 "login_name": "admin",
                 "login_time": utils.get_now(),
@@ -44,7 +44,7 @@ class UserModel(model.StandCURDModel):
                 "scope": "admin"
             }
             self.coll.save(user)
-            self._oauth2_register(utils.objectid_str(user['_id']),'2a4dfbc8f1267f04a8b0c5ddeb975a63')
+            self._oauth2_register(utils.objectid_str(user['_id']),'e10adc3949ba59abbe56e057f20f883e')
 
     #生成用户
     def new(self):
