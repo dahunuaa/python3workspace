@@ -50,7 +50,6 @@ def get_provider(role="normal"):
     scopes = []
     # Add Client Credentials to OAuth2 controller
     auth_provider.add_grant(oauth2.grant.ClientCredentialsGrant(default_scope=default_scope, scopes=scopes))
-
     return auth_provider
 
 

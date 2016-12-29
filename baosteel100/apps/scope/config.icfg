@@ -2,20 +2,20 @@
 model:'scope'
 version:'0.0.1'
 scope_roles:['superuser','scope','normal',
-             'user',
-             'user_admin']
+             'user','business'
+             'user_admin','business_admin']
 
 init_scope:{
 "normal":{
         "name":"normal",
-        "roles":['user']
+        "roles":['user','business']
         },
 "backend":{
         "name":"backend",
-        "roles":['user']
+        "roles":['user','business','business_admin']
         },
 "admin":{
         "name":"admin",
-        "roles":['superuser','user','user_admin']
+        "roles":['superuser','user','user_admin','business','business_admin']
         }
   }
