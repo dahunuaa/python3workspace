@@ -5,8 +5,8 @@ from baosteel100.libs.datatypelib import *
 class BusinessModel(model.StandCURDModel):
     _coll_name = "business"
     _columns = [
-        ("business_staff",ListDT(required=True)),#出差人员
-        ("staff_num",IntDT()),#出差人数根据business_staff确定
+        ("business_staff",StrDT(required=True)),#出差人员
+        ("business_num",StrDT(required=True)),
         ("business_place",StrDT(required=True)),
         ("business_reason",StrDT(required=True)),
         ("begin_time",StrDT(required=True)),
@@ -19,7 +19,7 @@ class BusinessModel(model.StandCURDModel):
         super(BusinessModel, self).__init__()
 
     def before_create(self,object):
-        object['staff_num']=len((object['business_staff']))
+        # object['staff_num']=len((object['business_staff']))
         user =self.user_coll.find_one({"_id":utils.create_objectid(object['add_user_id'])})
         object['add_user_name'] = user['name']
         self.coll.save(object)
