@@ -14,7 +14,14 @@ class BusinessModel(model.StandCURDModel):
         ("remark",StrDT())
     ]
 
+    def __init__(self):
+        self.user_coll = model.BaseModel.get_model("user.UserModel").get_coll()
+        super(BusinessModel, self).__init__()
+
     def before_create(self,object):
         object['staff_num']=len((object['business_staff']))
+        user =self.user_coll.find_one({"_id":utils.create_objectid(object['add_user_id'])})
+        object['add_user_name'] = user['name']
         self.coll.save(object)
         return object
+
