@@ -11,7 +11,7 @@ class BusinessListHandler(MultiStandardHandler,TokenHandler):
 
 class BusinessHandler(SingleStandardHanler,TokenHandler):
     _model = "business.BusinessModel"
-    enable_methods = ["get","put"]
+    enable_methods = ["get","put","delete"]
 
 handlers = [
     (r"",BusinessListHandler,get_provider("business")),
