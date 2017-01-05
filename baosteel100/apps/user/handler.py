@@ -39,9 +39,15 @@ class UserPswChangeHandler(MultiStandardHandler,TokenHandler):
         res = self.model.changepsw(mobile,oldpsw,newpsw)
         self.result['data'] = res
 
-class UserPswResetHandler(SingleStandardHanler,TokenHandler):
+class UserPswResetHandler(MultiStandardHandler,TokenHandler):
     _model = "user.UserModel"
     enable_methods = ["put"]
+
+    def _put(self):
+        reset_psw = self.get_argument("reset_psw",None)
+        mobile = self.get_argument("mobile",None)
+        res = self.model.reset_psw(mobile,reset_psw)
+        self.result['data'] = res
 
 
 class UserListHandler(MultiStandardHandler,TokenHandler):
@@ -58,7 +64,7 @@ handlers = [
     (r"/register",UserRegisterHandler),
     (r"/login",UserLoginHandler),
     (r'/psw/change',UserPswChangeHandler,get_provider("user")),
-    (r'/psw/reset',UserPswResetHandler),
+    (r'/psw/reset',UserPswResetHandler,get_provider("user_admin")),
     (r"",UserListHandler,get_provider("user_admin")),
     (r"/(.*)",UserHandler,get_provider("user_admin"))
 ]

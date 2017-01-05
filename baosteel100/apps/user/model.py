@@ -10,13 +10,14 @@ class UserModel(model.StandCURDModel):
     _coll_name = "user"
     _columns = [
         ("login_name",StrDT()),
-        ("mobile",StrDT()),
+        ("mobile",StrDT(required=True)),
         ("password",StrDT()),
         ("role",ListDT()),
-        ("name",StrDT()),
+        ("name",StrDT(required=True)),
         ("email",StrDT()),
         ("login_time",DatetimeDT(default=utils.get_now())),
-        ("scope",StrDT(default="normal"))
+        ("scope",StrDT(default="normal")),
+        ("job_no",StrDT(required=True))
     ]
 
     _default_redirect_url = None
@@ -41,7 +42,8 @@ class UserModel(model.StandCURDModel):
                 "add_time": utils.get_now(),
                 "id_card": None,
                 "name": "admin",
-                "scope": "admin"
+                "scope": "admin",
+                "job_no":"admin"
             }
             self.coll.save(user)
             self._oauth2_register(utils.objectid_str(user['_id']),'e10adc3949ba59abbe56e057f20f883e')
@@ -50,10 +52,16 @@ class UserModel(model.StandCURDModel):
     def new(self):
         user = None
         mobile = self.get_argument("mobile")
+        job_no = self.get_argument("job_no")
+        name = self.get_argument("name")
         password = utils.generate_password(self.get_argument("password"),mobile)
 
-        if mobile is None or password is None:
+        if mobile is None or password is None or job_no is None or name is None :
             raise ValueError(u"用户资料不完全")
+        if job_no is not None:
+            user = self.coll.find_one({"job_no":job_no,"enable_flag":1})
+            if user is not None:
+                raise ValueError(u"该工号已被使用！")
 
         if mobile is not None:
             user = self.coll.find_one({"mobile":mobile,"enable_flag":1})
@@ -83,7 +91,7 @@ class UserModel(model.StandCURDModel):
         user = super(UserModel,self)._new()
         if user['name'] =='':
             user['name'] = user['mobile']
-        user['password'] = utils.generate_password(user['password'],user['name'])
+        user['password'] = utils.generate_password(user['password'],user['mobile'])
         return user
 
     def get_oauth2_token(self,client_id,scopes):
@@ -108,7 +116,7 @@ class UserModel(model.StandCURDModel):
         if username is None or password is None:
             raise ValueError(u"用户或密码为空")
         a=utils.generate_password(password,username)
-        user = self.coll.find_one({"name":username,"password":utils.generate_password(password,username),"enable_flag":1})
+        user = self.coll.find_one({"mobile":username,"password":utils.generate_password(password,username),"enable_flag":1})
         if user is None:
             raise ValueError(u"用户名或密码错误")
         user['login_time']=utils.get_now()
@@ -148,7 +156,7 @@ class UserModel(model.StandCURDModel):
     def changepsw(self,username,oldpsw,newpsw):
         if username is None or oldpsw is None or newpsw is None:
             raise ValueError(u"用户名或密码为空")
-        user = self.coll.find_one({"name":username})
+        user = self.coll.find_one({"mobile":username})
         if not user:
             raise ValueError(u"无该用户")
         oldpsw_check = utils.generate_password(oldpsw,username)
@@ -161,6 +169,19 @@ class UserModel(model.StandCURDModel):
             raise ValueError(u"认证修改失败")
         oauth['secret']=utils.generate_password(newpsw,username)
         self.oauth_coll.save(oauth)
+
+    def reset_psw(self,username,reset_psw):
+        user = self.coll.find_one({"name":username})
+        if not user:
+            raise ValueError(u"无该用户")
+        user['password'] = utils.generate_password(reset_psw,username)
+        self.coll.save(user)
+        oauth = self.oauth_coll.find_one({"identifier": utils.objectid_str(user['_id'])})
+        if oauth is None:
+            raise ValueError(u"认证修改失败")
+        oauth['secret'] = utils.generate_password(reset_psw, username)
+        self.oauth_coll.save(oauth)
+
 
 
 
