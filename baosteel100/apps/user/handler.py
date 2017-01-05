@@ -26,11 +26,11 @@ class UserLoginHandler(MultiStandardHandler):
         res = self.model.login(mobile,password)
         self.result['data']=res
 
-class UserPswResetHandler(MultiStandardHandler):
+class UserPswChangeHandler(MultiStandardHandler,TokenHandler):
     _model = "user.UserModel"
-    enable_methods = ['post']
+    enable_methods = ['put']
 
-    def _post(self):
+    def _put(self):
         mobile = self.get_argument("mobile",None)
         oldpsw = self.get_argument("oldpsw",None)
         newpsw = self.get_argument("newpsw",None)
@@ -38,6 +38,10 @@ class UserPswResetHandler(MultiStandardHandler):
             raise ValueError(u"手机号或密码为空")
         res = self.model.changepsw(mobile,oldpsw,newpsw)
         self.result['data'] = res
+
+class UserPswResetHandler(SingleStandardHanler,TokenHandler):
+    _model = "user.UserModel"
+    enable_methods = ["put"]
 
 
 class UserListHandler(MultiStandardHandler,TokenHandler):
@@ -53,6 +57,7 @@ class UserHandler(SingleStandardHanler,TokenHandler):
 handlers = [
     (r"/register",UserRegisterHandler),
     (r"/login",UserLoginHandler),
+    (r'/psw/change',UserPswChangeHandler,get_provider("user")),
     (r'/psw/reset',UserPswResetHandler),
     (r"",UserListHandler,get_provider("user_admin")),
     (r"/(.*)",UserHandler,get_provider("user_admin"))

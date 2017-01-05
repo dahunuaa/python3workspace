@@ -484,7 +484,7 @@ class StandCURDModel(BaseModel):
                     sort.append((_s[1:], -1))
                 else:
                     sort.append((_s, 1))
-        sort.append(("_id", 1))
+        # sort.append(("_id", 1))
         sort.append(("last_updated_time", -1))
         sort.append(("add_time", -1))
         return SON(sort)
