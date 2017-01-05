@@ -8,10 +8,13 @@ logger = get_logger("debug")
 class BusinessListHandler(MultiStandardHandler,TokenHandler):
     _model = "business.BusinessModel"
     enable_methods = ["post","get"]
+    private = False;#默认为true 只能查看自己的订单
+
 
 class BusinessHandler(SingleStandardHanler,TokenHandler):
     _model = "business.BusinessModel"
     enable_methods = ["get","put","delete"]
+
 
 handlers = [
     (r"",BusinessListHandler,get_provider("business")),
