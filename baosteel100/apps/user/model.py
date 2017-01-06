@@ -186,8 +186,7 @@ class UserModel(model.StandCURDModel):
     def get_username_by_id(add_user_id):
         user_coll = model.BaseModel.get_model("user.UserModel").get_coll()
         user=user_coll.find_one({"_id":utils.create_objectid(add_user_id)})
-        print(user['name'])
-        return user['name']
+        return user
 
 
 

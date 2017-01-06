@@ -8,7 +8,7 @@ logger = get_logger("debug")
 
 class InforgatherListHandler(MultiStandardHandler,TokenHandler):
     _model = "inforgather.InforgatherModel"
-    enable_methods = ["post","get",]
+    enable_methods = ["post","get"]
     private = False
 
 class InforgatherHandler(SingleStandardHanler,TokenHandler):

@@ -386,6 +386,7 @@ def str_to_img(uri, string, url=None):
     f.close()
     return url
 
+
 def compare_time(dt1, dt2):
     if dt1 > dt2:
         raise Exception("开始时间不能大于结束时间！")
