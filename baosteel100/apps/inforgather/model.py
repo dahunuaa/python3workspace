@@ -29,12 +29,15 @@ class InforgatherModel(model.StandCURDModel):
     def save_images(self,add_user_jobno,images_list):
         images=[]
         for i in images_list:
-            try:
-                uri = utils.str_to_img("inforgather/%s_%s.png"%(add_user_jobno,utils.get_uuid()),i)
-                url = self.get_host()+uri
-            except:
-                url = i
-            images.append(url)
+            if i =="":
+                pass
+            else:
+                try:
+                    uri = utils.str_to_img("inforgather/%s_%s.png"%(add_user_jobno,utils.get_uuid()),i)
+                    url = self.get_host()+uri
+                except:
+                    url = i
+                images.append(url)
         return images
 
     def before_update(self,object):
