@@ -3,19 +3,19 @@ model:'scope'
 version:'0.0.1'
 scope_roles:['superuser','scope','normal',
              'user','business','inforgather'
-             'user_admin','business_admin','inforgather_admin']
+             'user_admin','business_admin','inforgather_admin','inforguide','inforguide_admin']
 
 init_scope:{
 "normal":{
         "name":"normal",
-        "roles":['user','business','inforgather']
+        "roles":['user','business','inforgather','inforguide']
         },
 "backend":{
         "name":"backend",
-        "roles":['user','business','business_admin','inforgather_admin','inforgather']
+        "roles":['user','business','business_admin','inforgather_admin','inforgather','inforguide','inforguide_admin']
         },
 "admin":{
         "name":"admin",
-        "roles":['superuser','user','user_admin','business','business_admin','inforgather','inforgather_admin']
+        "roles":['superuser','user','user_admin','business','business_admin','inforgather','inforgather_admin','inforguide','inforguide_admin']
         }
   }
