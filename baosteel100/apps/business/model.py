@@ -25,3 +25,4 @@ class BusinessModel(model.StandCURDModel):
         self.coll.save(object)
         return object
 
+
