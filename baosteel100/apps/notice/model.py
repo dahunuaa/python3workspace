@@ -2,6 +2,7 @@
 
 import baosteel100.apps.base.model as model
 from baosteel100.libs.datatypelib import *
+import  baosteel100.libs.utils as utils
 
 class NoticeModel(model.StandCURDModel):
     _coll_name = "notice"
@@ -21,3 +22,12 @@ class NoticeModel(model.StandCURDModel):
         object['add_user_name'] = user['name']
         self.coll.save(object)
         return object
+
+    def after_create(self,object):
+        noticeread_coll = model.BaseModel.get_model("noticeread.NoticereadModel").get_coll()
+        _noticeread = noticeread_coll.find()
+        for i in _noticeread:
+            i["unread_msg"].append(utils.objectid_str(object['_id']))
+            noticeread_coll.save(i)
+        return object
+
