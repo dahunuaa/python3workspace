@@ -89,8 +89,14 @@ class UserModel(model.StandCURDModel):
 
     def _new(self):
         user = super(UserModel,self)._new()
+        noticeread_coll = model.BaseModel.get_model("noticeread.NoticereadModel").get_coll()
         if user['name'] =='':
             user['name'] = user['mobile']
+        _noticeread = {
+            "user_id":user['mobile'],
+            "unread_msg":[]
+        }
+        noticeread_coll.save(_noticeread)
         user['password'] = utils.generate_password(user['password'],user['mobile'])
         return user
 

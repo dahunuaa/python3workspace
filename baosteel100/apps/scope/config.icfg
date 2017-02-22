@@ -3,21 +3,21 @@ model:'scope'
 version:'0.0.1'
 
 scope_roles:['superuser','scope','normal',
-             'user','business','inforgather','feedback','notice',
-             'user_admin','business_admin','inforgather_admin','inforguide','inforguide_admin','feedback_admin','notice_admin']
+             'user','business','inforgather','feedback','notice','noticeread',
+             'user_admin','business_admin','inforgather_admin','inforguide','inforguide_admin','feedback_admin','notice_admin','noticeread_admin']
 
 init_scope:{
 "normal":{
         "name":"normal",
-        "roles":['user','business','inforgather','inforguide','feedback''notice']
+        "roles":['user','business','inforgather','inforguide','feedback''notice','noticeread']
         },
 "backend":{
         "name":"backend",
-        "roles":['user','business','business_admin','inforgather_admin','inforgather','inforguide','inforguide_admin','feedback','feedback_admin','notice','notice_admin']
+        "roles":['user','business','business_admin','inforgather_admin','inforgather','inforguide','inforguide_admin','feedback','feedback_admin','notice','notice_admin','noticeread','noticeread_admin']
         },
 "admin":{
         "name":"admin",
         "roles":['superuser','user','user_admin','business','business_admin','inforgather','inforgather_admin','inforguide','inforguide_admin','feedback','feedback_admin',
-                'notice','notice_admin']
+                'notice','notice_admin','noticeread','noticeread_admin']
         }
   }
