@@ -15,14 +15,16 @@ class NoticereadModel(model.StandCURDModel):
         super(NoticereadModel,self).__init__()
 
     def init(self):
-        noticeread = self.user_coll.find()
-        for i in noticeread:
+        user_coll = self.user_coll.find()
+        for i in user_coll:
             _mobile = i['mobile']
-            notice_read = {
-                "user_id":_mobile,
-                "unread_msg":[],
-            }
-            self.coll.save(notice_read)
+            _new_notice=self.coll.find_one({"user_id":_mobile})
+            if not _new_notice:
+                notice_read = {
+                    "user_id":_mobile,
+                    "unread_msg":[],
+                }
+                self.coll.save(notice_read)
 
 
 
