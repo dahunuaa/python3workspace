@@ -4,15 +4,22 @@ from baosteel100.libs.oauthlib import get_provider
 
 class NoticereadListHandler(TokenHandler,MultiStandardHandler):
     _model = "noticeread.NoticereadModel"
-    enable_methods = ['post','get']
+    enable_methods = ['get']
     private = False
 
-class NoticeHandler(SingleStandardHanler,TokenHandler):
-    _model = "notice.NoticereadModel"
-    enable_methods = ['get','put','delete']
-    private = False
+class NoticeHandler(MultiStandardHandler,TokenHandler):
+    _model = "noticeread.NoticereadModel"
+    enable_methods = ['put']
+
+    def _put(self):
+        user_id = self.get_argument("user_id")
+        msg_id = self.get_argument("msg_id")
+        res = self.model.minus(user_id,msg_id)
+        self.result['data']=res
+
 
 handlers = [
-    (r"",NoticereadListHandler,get_provider("noticeread")),
-    (r"/(.*)",NoticeHandler,get_provider("noticeread"))
+    (r"/minus",NoticeHandler,get_provider("noticeread")),
+    (r"",NoticereadListHandler,get_provider("noticeread")),#此处用put但是不是直接附id，所以继承MultiStandardHandler
+    # (r"/(.*)",NoticeHandler,get_provider("noticeread"))
 ]
