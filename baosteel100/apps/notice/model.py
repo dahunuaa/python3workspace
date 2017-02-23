@@ -31,3 +31,13 @@ class NoticeModel(model.StandCURDModel):
             noticeread_coll.save(i)
         return object
 
+    def after_delete(self,object):
+        msg_id = utils.objectid_str(object["_id"])
+        noticeread_coll = model.BaseModel.get_model("noticeread.NoticereadModel").get_coll()
+        _noticeread = noticeread_coll.find()
+        for i in _noticeread:
+            if msg_id in i["unread_msg"]:
+                i["unread_msg"].remove(msg_id)
+                noticeread_coll.save(i)
+        return object
+
