@@ -4,10 +4,10 @@ from baosteel100.libs.oauthlib import get_provider
 import time
 import os
 import baosteel100.libs.utils as utils
-import baosteel100.apps.base.model as model
+import traceback
 
 
-class UploadFileHandler(MultiStandardHandler,TokenHandler):
+class UploadFileHandler(MultiStandardHandler):
     _model = "file.FileModel"
 
     def post(self):
@@ -30,12 +30,11 @@ class UploadFileHandler(MultiStandardHandler,TokenHandler):
             #有些文件需要已二进制的形式存储，实际中可以更改
             with open(filepath,'wb') as up:
                 up.write(meta['body'])
-            self.write('finished!')
-        result = {"success":1,"data":{"file_name":filename,"file_path":filepath}}
-        self.finish(result)
+        self.result["data"] = {"file_name":filename,"file_path":filepath}
+        self.finish(self.result)#此处用self.result['data']形式，回调函数是json类型，如果直接是result，回调函数的数据类型是text
 
 
 
 handlers = [
-    (r"/upload",UploadFileHandler,get_provider("file")),
+    (r"/upload",UploadFileHandler)
 ]
