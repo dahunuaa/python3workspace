@@ -8,12 +8,12 @@ import baosteel100
 def get_root_path():
     return os.path.dirname(os.path.abspath(baosteel100.__file__))
 
-class UploadFileHandler(MultiStandardHandler):
+class UploadFileHandler(MultiStandardHandler,TokenHandler):
     _model = "file.FileModel"
 
     def post(self):
         #文件的暂存路径
-        host = self.request.host
+        host = "http://"+self.request.host
         relative_path =get_root_path() + '/static/ftp/file/'#文件存放的具体硬盘路径
         upload_path = host +'/static/ftp/file/'
 
@@ -41,5 +41,5 @@ class UploadFileHandler(MultiStandardHandler):
 
 
 handlers = [
-    (r"/upload",UploadFileHandler)
+    (r"/upload",UploadFileHandler,get_provider("file"))
 ]
