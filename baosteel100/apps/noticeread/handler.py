@@ -7,6 +7,8 @@ class NoticereadListHandler(TokenHandler,MultiStandardHandler):
     enable_methods = ['get']
     private = False
 
+
+
 class NoticeHandler(MultiStandardHandler,TokenHandler):
     _model = "noticeread.NoticereadModel"
     enable_methods = ['put']

@@ -3,6 +3,7 @@
 import baosteel100.apps.base.model as model
 from baosteel100.libs.datatypelib import *
 import  baosteel100.libs.utils as utils
+import baosteel100.apps.user.model as user_model
 
 class NoticeModel(model.StandCURDModel):
     _coll_name = "notice"
@@ -40,4 +41,14 @@ class NoticeModel(model.StandCURDModel):
                 i["unread_msg"].remove(msg_id)
                 noticeread_coll.save(i)
         return object
+
+    def unread_msg(self):
+        user_mobile = user_model.UserModel.get_user_mobile_by_token(self._arguments["access_token"])
+        noticeread_coll = model.BaseModel.get_model("noticeread.NoticereadModel").get_coll()
+        noticeread = noticeread_coll.find_one({"user_id":user_mobile["mobile"]})
+        return noticeread
+
+
+
+
 

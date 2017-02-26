@@ -9,6 +9,8 @@ class NoticeListHandler(TokenHandler,MultiStandardHandler):
     _model = "notice.NoticeModel"
     enable_methods = ["post","get"]
 
+
+
 class Noticehandler(TokenHandler,SingleStandardHanler):
     _model = "notice.NoticeModel"
     enable_methods = ["get","put","delete"]

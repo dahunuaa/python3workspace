@@ -432,6 +432,7 @@ class MultiStandardHandler(APIHandler):
         if len(self.enable_methods) == 0 or "get" in self.enable_methods:
             self.result['data'] = self.model.list()[0]
             self.result['pager'] = self.model.list()[1]
+            self.result["unread"] = self.model.list()[2]
         else:
             raise NotImplementedError(u"暂无此操作")
 

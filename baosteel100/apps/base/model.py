@@ -359,6 +359,9 @@ class StandCURDModel(BaseModel):
     def before_list(self):
         return None
 
+    def unread_msg(self):
+        return None
+
     def create(self, object=None):
         if object is None:
             object = self._new()
@@ -392,6 +395,7 @@ class StandCURDModel(BaseModel):
         return res
 
     def list(self, query=None, sort=None, pager=None, update=False, origin=False):
+        unread = self.unread_msg()#remark是后来加上去的，在公告查询，出差查询，信息指南等模块在查询list的时候需要顺便查到该用户下未读的公告，出差等信息
         self.before_list()
         if query is None:
             query = self.query(update)
@@ -418,7 +422,8 @@ class StandCURDModel(BaseModel):
         res = self.dump(res)
         res = self.embed(res)
         res = self.fields(res)
-        return res, pager
+        unread = self.dump(unread)
+        return res, pager,unread
 
     # 获取批量获取的ids
     def get_ids(self):

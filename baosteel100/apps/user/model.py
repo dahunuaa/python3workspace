@@ -194,6 +194,14 @@ class UserModel(model.StandCURDModel):
         user=user_coll.find_one({"_id":utils.create_objectid(add_user_id)})
         return user
 
+    def get_user_mobile_by_token(access_token):
+        user_coll = model.BaseModel.get_model("user.UserModel").get_coll()
+        user_token_coll = model.BaseModel.get_model("oauth.OauthAccessTokenModel").get_coll()
+        user_id = user_token_coll.find_one({"token":access_token})['user_id']
+        user_mobile = user_coll.find_one({"_id":utils.create_objectid(user_id)})
+        return user_mobile
+
+
 
 
 
