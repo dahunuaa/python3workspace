@@ -21,7 +21,7 @@ class NoticeHandler(MultiStandardHandler,TokenHandler):
 
 
 handlers = [
-    (r"/minus",NoticeHandler,get_provider("noticeread")),
-    (r"",NoticereadListHandler,get_provider("noticeread")),#此处用put但是不是直接附id，所以继承MultiStandardHandler
+    (r"/minus",NoticeHandler,get_provider("noticeread")),#此处用put但是不是直接附id，所以继承MultiStandardHandler
+    (r"",NoticereadListHandler,get_provider("noticeread")),
     # (r"/(.*)",NoticeHandler,get_provider("noticeread"))
 ]

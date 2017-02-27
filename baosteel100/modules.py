@@ -9,7 +9,7 @@ module = "baosteel100"
 name = "baosteel100"
 
 main_apps = [
-    "base", "oauth", "scope", "user","business","inforgather","inforguide","feedback","notice","noticeread","comment","file"
+    "base", "oauth", "scope", "user","business","inforgather","inforguide","feedback","notice","noticeread","comment","file","msgunread"
 ]
 
 # oauth_apps = [

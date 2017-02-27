@@ -2,6 +2,7 @@
 
 import baosteel100.apps.base.model as model
 from baosteel100.libs.datatypelib import *
+import baosteel100.apps.user.model as user_model
 
 class InforgatherModel(model.StandCURDModel):
     _coll_name = "inforgather"
@@ -24,6 +25,31 @@ class InforgatherModel(model.StandCURDModel):
         object['add_user_name'] = user['name']
         self.coll.save(object)
         return object
+
+    def after_create(self,object):
+        msgunread_coll = model.BaseModel.get_model("msgunread.MsgunreadModel").get_coll()
+        _msgunread = msgunread_coll.find()
+        for i in _msgunread:
+            i["gather_unread"].append(utils.objectid_str(object['_id']))
+            msgunread_coll.save(i)
+        return object
+
+    def after_delete(self,object):
+        msg_id = utils.objectid_str(object["_id"])
+        msgunread_coll = model.BaseModel.get_model("msgunread.MsgunreadModel").get_coll()
+        _msgunread = msgunread_coll.find()
+        for i in _msgunread:
+            if msg_id in i["gather_unread"]:
+                i["gather_unread"].remove(msg_id)
+                msgunread_coll.save(i)
+        return object
+
+    def unread_msg(self):
+        user_mobile = user_model.UserModel.get_user_mobile_by_token(self._arguments["access_token"])
+        msgunread_coll = model.BaseModel.get_model("msgunread.MsgunreadModel").get_coll()
+        msgunread = msgunread_coll.find_one({"user_id":user_mobile["mobile"]})
+        return msgunread
+
 
 
 
