@@ -16,7 +16,9 @@ class BusinessHandler(SingleStandardHanler,TokenHandler):
     enable_methods = ["get","put","delete"]
 
 
+
 handlers = [
     (r"",BusinessListHandler,get_provider("business")),
-    (r"/(.*)",BusinessHandler,get_provider("business"))
+    (r"/(.*)",BusinessHandler,get_provider("business")),
+
 ]
