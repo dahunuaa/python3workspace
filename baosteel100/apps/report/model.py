@@ -33,5 +33,78 @@ class ReportModel(model.StandCURDModel):
         result = report_util.export_excel(report_china_name=[report_china_name],namelist=[namelist],result=[export_bus_list],fieldlist=[fieldlist])
         return result
 
+    def inforgather_report(self):
+        inforgather = model.BaseModel.get_model("inforgather.InforgatherModel").get_coll()
+        inforgather_data=utils.dump(inforgather.find())#注意此处需要先将查询出来的类型转换成json类型
+        report_china_name = "inforgather"#windows上面目前路径有汉字的下载不好使
+        namelist = [u'序号','情报单号','搜集人','标题','地址','油田区块','油田','内容','添加时间','最后修改时间','文件名','下载地址']
+        fieldlist = []
+        export_bus_list =[]
+        for gather in inforgather_data:
+            export_bus_list.append({
+                "gather_order":gather["_id"],
+                "add_user_name":gather["add_user_name"],
+                "gather_title":gather["gather_title"],
+                "gather_address":gather["gather_address"],
+                "gather_area":gather["gather_area"],
+                "gather_oilfield":gather["gather_oilfield"],
+                "gather_text":gather["gather_text"],
+                "add_time":gather["add_time"],
+                "last_updated_time":gather["last_updated_time"],
+                "filename":gather["filename"],
+                "filepath":gather["filepath"]
+            })
+        if len(export_bus_list)>0:
+            fieldlist=['gather_order','add_user_name','gather_title','gather_address','gather_area','gather_oilfield','gather_text','add_time','last_updated_time','filename','filepath']
+
+        result = report_util.export_excel(report_china_name=[report_china_name],namelist=[namelist],result=[export_bus_list],fieldlist=[fieldlist])
+        return result
+
+    def inforguide_report(self):
+        inforguide = model.BaseModel.get_model("inforguide.InforguideModel").get_coll()
+        inforguide_data=utils.dump(inforguide.find())#注意此处需要先将查询出来的类型转换成json类型
+        report_china_name = "inforguide"#windows上面目前路径有汉字的下载不好使
+        namelist = [u'序号','单号','搜集人','标题','分类','内容','添加时间','最后修改时间','图片地址']
+        fieldlist = []
+        export_bus_list =[]
+        for guide in inforguide_data:
+            export_bus_list.append({
+                "guide_order":guide["_id"],
+                "add_user_name":guide["add_user_name"],
+                "guide_title":guide["guide_title"],
+                "guide_type":guide["guide_type"],
+                "guide_text":guide["guide_text"],
+                "add_time":guide["add_time"],
+                "last_updated_time":guide["last_updated_time"],
+                "images":str(guide["images"]) ,
+            })
+        if len(export_bus_list)>0:
+            fieldlist=['guide_order','add_user_name','guide_title','guide_type','guide_text','add_time','last_updated_time','images']
+
+        result = report_util.export_excel(report_china_name=[report_china_name],namelist=[namelist],result=[export_bus_list],fieldlist=[fieldlist])
+        return result
+
+    def notice_report(self):
+        notice = model.BaseModel.get_model("notice.NoticeModel").get_coll()
+        notice_data=utils.dump(notice.find())#注意此处需要先将查询出来的类型转换成json类型
+        report_china_name = "notice"#windows上面目前路径有汉字的下载不好使
+        namelist = [u'序号','单号','发布人','标题','内容','发布时间','最后修改时间']
+        fieldlist = []
+        export_bus_list =[]
+        for notice in notice_data:
+            export_bus_list.append({
+                "notice_order":notice["_id"],
+                "add_user_name":notice["add_user_name"],
+                "notice_title":notice["notice_title"],
+                "notice_text":notice["notice_text"],
+                "add_time":notice["add_time"],
+                "last_updated_time":notice["last_updated_time"],
+            })
+        if len(export_bus_list)>0:
+            fieldlist=['notice_order','add_user_name','notice_title','notice_text','add_time','last_updated_time']
+
+        result = report_util.export_excel(report_china_name=[report_china_name],namelist=[namelist],result=[export_bus_list],fieldlist=[fieldlist])
+        return result
+
 
 
