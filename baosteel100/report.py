@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 #
 # @author: Daemon Wang
@@ -165,20 +164,19 @@ def export_excel(report_china_name=[],result=[],fieldlist=[],namelist=[],addfiel
                 sheet.col(i).width = width
             titleCount = titleCount + 1
 
-        host = "localhost:8503"
-        file_name ='%s.xls'% china_name
-        path = get_root_path() + '/static/ftp/report/'
-        report_path = host+'/static/ftp/report/'
-        downlown_path = os.path.join(report_path,file_name)
-        file_path = path+file_name
+        file_download_store_url = get_root_path()+"/static/ftp/report/"
+        file_name='%s.xls'% china_name
+        path = os.path.join(file_download_store_url)
+        file_path = os.path.join(path,file_name)
         if not os.path.exists(path):
             os.makedirs(path)
         report.save(file_path)
-        file_paths.append(downlown_path)
+        file_paths.append(file_path)
         file_names.append(file_name)
-        # print(downlown_path)
     result = {"file_path":file_paths,"filename":file_names,"report_data":report}
     return result
+
+
 
 
 def calcalateLen(param,len):
