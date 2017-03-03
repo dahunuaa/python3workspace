@@ -50,6 +50,20 @@ class InforgatherModel(model.StandCURDModel):
         msgunread = msgunread_coll.find_one({"user_id":user_mobile["mobile"]})
         return msgunread
 
+    def classify(self):
+        dongbei_count=self.coll.find({"gather_area":"东北"}).count()
+        xinan_count=self.coll.find({"gather_area":"西南"}).count()
+        zhonghaiyu_count=self.coll.find({"gather_area":"中海油"}).count()
+        huabei_count=self.coll.find({"gather_area":"华北"}).count()
+        huazhong_count=self.coll.find({"gather_area":"华中"}).count()
+        huadong_count=self.coll.find({"gather_area":"华东"}).count()
+        xinjiang_count=self.coll.find({"gather_area":"新疆"}).count()
+        result = {"dongbei":dongbei_count,"xinan":xinan_count,"zhonghaiyu":zhonghaiyu_count,
+                 "huabei": huabei_count,"huazhong":huazhong_count,"huadong":huadong_count,"xinjiang":xinjiang_count}
+        return result
+
+
+
 
 
 

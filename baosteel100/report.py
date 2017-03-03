@@ -168,12 +168,13 @@ def export_excel(report_china_name=[],result=[],fieldlist=[],namelist=[],addfiel
         file_name='%s.xls'% china_name
         path = os.path.join(file_download_store_url)
         file_path = os.path.join(path,file_name)
+        download_path = "http://192.168.191.1:8503/static/ftp/report/"+file_name
         if not os.path.exists(path):
             os.makedirs(path)
         report.save(file_path)
         file_paths.append(file_path)
         file_names.append(file_name)
-    result = {"file_path":file_paths,"filename":file_names,"report_data":report}
+    result = {"file_path":file_paths,"filename":file_names,"report_data":report,"download_path":download_path}
     return result
 
 

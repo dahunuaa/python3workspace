@@ -15,9 +15,18 @@ class InforgatherHandler(SingleStandardHanler,TokenHandler):
     _model = "inforgather.InforgatherModel"
     enable_methods = ["get","put","delete"]
 
+class InforgatherClassifyHandler(MultiStandardHandler,TokenHandler):
+    _model = "inforgather.InforgatherModel"
+    enable_methods = ["get"]
+
+    def get(self):
+        result = self.model.classify()
+        self.result["data"] = result
+        self.finish(self.result)
 
 handlers = [
     (r"",InforgatherListHandler,get_provider("inforgather")),
+    (r"/classify",InforgatherClassifyHandler,get_provider("inforgather")),
     (r"/(.*)",InforgatherHandler,get_provider("inforgather"))
 ]
 
