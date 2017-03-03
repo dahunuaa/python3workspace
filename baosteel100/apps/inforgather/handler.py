@@ -20,8 +20,7 @@ class InforgatherClassifyHandler(MultiStandardHandler,TokenHandler):
     enable_methods = ["get"]
 
     def get(self):
-        result = self.model.classify()
-        self.result["data"] = result
+        self.result["data"] = self.model.classify()
         self.finish(self.result)
 
 handlers = [
