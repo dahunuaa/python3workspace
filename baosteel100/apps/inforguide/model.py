@@ -76,9 +76,9 @@ class InforguideModel(model.StandCURDModel):
         yonghuxinxi_count = self.coll.find({"guide_type":"用户信息"}).count()
         chanpinxinxi_count = self.coll.find({"guide_type": "产品信息"}).count()
         hangyexinxi_count = self.coll.find({"guide_type": "行业信息"}).count()
-        gongsixinxi_count = self.coll.find({"guide_type": "公司新闻"}).count()
+        gongsixinwen_count = self.coll.find({"guide_type": "公司新闻"}).count()
         result = {"bijixiaojie":bijixiaojie_count,"yonghuxinxi":yonghuxinxi_count,"chanpinxinxi":chanpinxinxi_count,
-                  "hangyexinxi":hangyexinxi_count,"gongsixinxi":gongsixinxi_count}
+                  "hangyexinxi":hangyexinxi_count,"gongsixinwen":gongsixinwen_count}
         return result
 
 

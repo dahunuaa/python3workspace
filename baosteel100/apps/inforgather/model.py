@@ -58,7 +58,7 @@ class InforgatherModel(model.StandCURDModel):
         huazhong_count=self.coll.find({"gather_area":"华中"}).count()
         huadong_count=self.coll.find({"gather_area":"华东"}).count()
         xinjiang_count=self.coll.find({"gather_area":"新疆"}).count()
-        result = {"dongbei":dongbei_count,"xinan":xinan_count,"zhonghaiyu":zhonghaiyu_count,
+        result = {"dongbei":dongbei_count,"xinan":xinan_count,"zhonghaiyou":zhonghaiyu_count,
                  "huabei": huabei_count,"huazhong":huazhong_count,"huadong":huadong_count,"xinjiang":xinjiang_count}
         return result
 
