@@ -32,7 +32,7 @@ class UserModel(model.StandCURDModel):
             user={
                 "enable_flag": 1,
                 "mobile": "admin",
-                "password": "e10adc3949ba59abbe56e057f20f883e",
+                "password": "b9d11b3be25f5a1a7dc8ca04cd310b28",#admin账号的密码是123456
                 "email": None,
                 "login_name": "admin",
                 "login_time": utils.get_now(),
@@ -66,7 +66,7 @@ class UserModel(model.StandCURDModel):
         if mobile is not None:
             user = self.coll.find_one({"mobile":mobile,"enable_flag":1})
             if user is not None:
-                raise ValueError(u"该手机号已经注册")
+                raise ValueError(u"该工号已经注册")
             else:
                 self._arguments['login_name'] = u"%s****%s"%(mobile[0:3],mobile[-3:])
                 user=self._create()
@@ -90,13 +90,21 @@ class UserModel(model.StandCURDModel):
     def _new(self):
         user = super(UserModel,self)._new()
         noticeread_coll = model.BaseModel.get_model("noticeread.NoticereadModel").get_coll()
+        msgunread_coll = model.BaseModel.get_model("msgunread.MsgunreadModel").get_coll()
         if user['name'] =='':
             user['name'] = user['mobile']
         _noticeread = {
             "user_id":user['mobile'],
             "unread_msg":[]
         }
+        _msgunread = {
+            "user_id":user['mobile'],
+            "buss_unread":[],
+            "gather_unread":[],
+            "guide_unread":[]
+        }
         noticeread_coll.save(_noticeread)
+        msgunread_coll.save(_msgunread)
         user['password'] = utils.generate_password(user['password'],user['mobile'])
         return user
 

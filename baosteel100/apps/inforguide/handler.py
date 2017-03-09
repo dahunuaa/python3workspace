@@ -14,10 +14,12 @@ class InforguideListHandler(MultiStandardHandler,TokenHandler):
 class InforguideHandler(SingleStandardHanler,TokenHandler):
     _model = "inforguide.InforguideModel"
     enable_methods = ["get","put","delete"]
+    private = False
 
 class InforguideClassifyHandler(MultiStandardHandler,TokenHandler):
     _model = "inforguide.InforguideModel"
     enable_methods = ["get"]
+    private = False
     def get(self):
         self.result["data"] = self.model.classify()
         self.finish(self.result)

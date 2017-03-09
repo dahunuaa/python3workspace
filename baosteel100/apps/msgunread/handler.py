@@ -6,6 +6,7 @@ from baosteel100.libs.oauthlib import get_provider
 class MsgunreadHandler(MultiStandardHandler,TokenHandler):
     _model = "msgunread.MsgunreadModel"
     enable_methods = ["put","get"]
+    private = False
 
     def _put(self):
         user_id = self.get_argument("user_id")

@@ -9,6 +9,7 @@ logger = get_logger("debug")
 class FeedbackListHandler(MultiStandardHandler,TokenHandler):
     _model = "feedback.FeedbackModel"
     enable_methods = ['post','get']
+    private = False
 
 class FeedbackHandler(SingleStandardHanler,TokenHandler):
     _model = "feedback.FeedbackModel"

@@ -14,10 +14,12 @@ class InforgatherListHandler(MultiStandardHandler,TokenHandler):
 class InforgatherHandler(SingleStandardHanler,TokenHandler):
     _model = "inforgather.InforgatherModel"
     enable_methods = ["get","put","delete"]
+    private = False
 
 class InforgatherClassifyHandler(MultiStandardHandler,TokenHandler):
     _model = "inforgather.InforgatherModel"
     enable_methods = ["get"]
+    private = False
 
     def get(self):
         self.result["data"] = self.model.classify()

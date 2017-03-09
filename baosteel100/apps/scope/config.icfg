@@ -12,7 +12,7 @@ scope_roles:['superuser','scope','normal',
 init_scope:{
 "normal":{
         "name":"normal",
-        "roles":['user','business','inforgather','inforguide','feedback''notice','noticeread','comment','file','msgunread',
+        "roles":['user','business','inforgather','inforguide','feedback''notice','noticeread','comment','file','msgunread','msgunread_admin',
                 'like','report','sign']
         },
 "backend":{
