@@ -18,7 +18,7 @@ class BusinessModel(model.StandCURDModel):
 
     def __init__(self):
         self.user_coll = model.BaseModel.get_model("user.UserModel").get_coll()
-        super(BusinessModel, self).__init__()
+        super(BusinessModel, self).__init__()#继承BusinessModel超类的__init__为了继续使用其超类的功能
 
     def before_create(self,object):
         # object['staff_num']=len((object['business_staff']))

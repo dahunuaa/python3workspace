@@ -57,7 +57,7 @@ class UserListHandler(MultiStandardHandler,TokenHandler):
 
 class UserHandler(SingleStandardHanler,TokenHandler):
     _model = "user.UserModel"
-    enable_methods = ['get']
+    enable_methods = ['get','delete']
 
 
 handlers = [

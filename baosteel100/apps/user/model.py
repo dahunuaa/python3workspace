@@ -158,14 +158,14 @@ class UserModel(model.StandCURDModel):
                 roles.append(r)
         return roles
 
-    def delete(self):
-        object = self._get_from_id(update = True)
-        object = self.before_delete(object)
-        object["enable_flag"] = 0
-        object["delete_user_id"] = self._arguments["delete_user_id"]
-        self.coll.save(object)
-        self.after_delete(object)
-        return utils.dump(object)
+    # def delete(self):
+    #     object = self._get_from_id(update = True)
+    #     object = self.before_delete(object)
+    #     object["enable_flag"] = 0
+    #     object["delete_user_id"] = self._arguments["delete_user_id"]
+    #     self.coll.save(object)
+    #     self.after_delete(object)
+    #     return utils.dump(object)
 
     def changepsw(self,username,oldpsw,newpsw):
         if username is None or oldpsw is None or newpsw is None:

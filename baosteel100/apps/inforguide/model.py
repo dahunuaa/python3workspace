@@ -11,7 +11,8 @@ class InforguideModel(model.StandCURDModel):
         ("guide_type",StrDT(required=True)),
         ("guide_text", StrDT(required=True)),
         ("images_list",ListDT()),
-        # ("files",ListDT())
+        ("filename", StrDT()),
+        ("filepath", StrDT()),
     ]
 
     def before_create(self,object):
