@@ -14,6 +14,19 @@ import os
 from functools import reduce
 import baosteel100
 
+
+def change_time(time_desc, start_time, end_time):
+    query_params = {}
+    if time_desc != "all":
+        # start_time,end_time = self._get_search_time(time_desc,start_time,end_time)
+        query_params.update({
+            "add_time": {
+                "$gte": utils.strtodatetime(start_time, '%Y-%m-%d %H:%M:%S'),
+                "$lte": utils.strtodatetime(end_time, '%Y-%m-%d %H:%M:%S'),
+            }
+        })
+    return query_params
+
 def get_root_path():
     return os.path.dirname(os.path.abspath(baosteel100.__file__))
 

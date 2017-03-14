@@ -8,10 +8,15 @@ class BusinessReportHandler(MultiStandardHandler,TokenHandler):
     enable_methods = ["get"]
 
     def get(self):
-        result = self.model.business_report()
+        time_desc = self.get_argument("time_desc", "all")
+        start_time = self.get_argument("start_time",None)
+        end_time = self.get_argument("end_time",None)
+
+        result = self.model.business_report(time_desc,start_time,end_time)[0]
+        data = self.model.business_report(time_desc,start_time,end_time)[1]
         file_names = result["filename"]
         file_paths = result["file_path"]
-        self.result["data"]={"download_path":result["download_path"],"file_name":file_names,"file_path":file_paths}
+        self.result["data"]={"download_path":result["download_path"],"file_name":file_names,"file_path":file_paths,"report_data":data}
         self.finish(self.result)
 
         #以下注释内容可以直接在浏览器下载该文件
@@ -30,10 +35,14 @@ class InforgatherReportHandler(MultiStandardHandler,TokenHandler):
     enable_methods = ["get"]
 
     def get(self):
-        result = self.model.inforgather_report()
+        time_desc = self.get_argument("time_desc", "all")
+        start_time = self.get_argument("start_time", None)
+        end_time = self.get_argument("end_time", None)
+        result = self.model.inforgather_report(time_desc,start_time,end_time)[0]
+        data = self.model.inforgather_report(time_desc, start_time, end_time)[1]
         file_names = result["filename"]
         file_paths = result["file_path"]
-        self.result["data"]={"download_path":result["download_path"],"file_name":file_names,"file_path":file_paths}
+        self.result["data"]={"download_path":result["download_path"],"file_name":file_names,"file_path":file_paths,"report_data":data}
         self.finish(self.result)
 
 class InforguideReportHandler(MultiStandardHandler,TokenHandler):
@@ -41,10 +50,14 @@ class InforguideReportHandler(MultiStandardHandler,TokenHandler):
     enable_methods = ["get"]
 
     def get(self):
-        result = self.model.inforguide_report()
+        time_desc = self.get_argument("time_desc", "all")
+        start_time = self.get_argument("start_time", None)
+        end_time = self.get_argument("end_time", None)
+        result = self.model.inforguide_report(time_desc, start_time, end_time)[0]
+        data = self.model.inforguide_report(time_desc, start_time, end_time)[1]
         file_names = result["filename"]
         file_paths = result["file_path"]
-        self.result["data"]={"download_path":result["download_path"],"file_name":file_names,"file_path":file_paths}
+        self.result["data"]={"download_path":result["download_path"],"file_name":file_names,"file_path":file_paths,"report_data":data}
         self.finish(self.result)
 
 class NoticeReportHandler(MultiStandardHandler,TokenHandler):
@@ -52,10 +65,14 @@ class NoticeReportHandler(MultiStandardHandler,TokenHandler):
     enable_methods = ["get"]
 
     def get(self):
-        result = self.model.notice_report()
+        time_desc = self.get_argument("time_desc", "all")
+        start_time = self.get_argument("start_time", None)
+        end_time = self.get_argument("end_time", None)
+        result = self.model.notice_report(time_desc, start_time, end_time)[0]
+        data = self.model.notice_report(time_desc, start_time, end_time)[1]
         file_names = result["filename"]
         file_paths = result["file_path"]
-        self.result["data"]={"download_path":result["download_path"],"file_name":file_names,"file_path":file_paths}
+        self.result["data"]={"download_path":result["download_path"],"file_name":file_names,"file_path":file_paths,"report_data":data}
         self.finish(self.result)
 
 
