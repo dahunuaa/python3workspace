@@ -26,9 +26,21 @@ class LikelistHandler(MultiStandardHandler,TokenHandler):
         self.result["data"]["guide_like_detail"]=res[2]
         self.result["data"]["gather_like_detail"]=res[3]
 
+class IsLikeHandler(MultiStandardHandler,TokenHandler):
+    _model = "like.LikeModel"
+    enable_methods = ['get']
+
+    def _get(self):
+        user_id = self.get_argument("user_id")
+        type = self.get_argument("type")
+        like_id = self.get_argument("like_id")
+        res = self.model.islike(user_id,type,like_id)
+        self.result["islike"]=res
+
 
 handlers = [
     (r"/alter",LikeHandler,get_provider("like")),
     (r"/list",LikelistHandler,get_provider("like")),
+    (r"/islike",IsLikeHandler,get_provider("like")),
     (r"",LikeHandler,get_provider("like"))
 ]

@@ -76,3 +76,22 @@ class LikeModel(model.StandCURDModel):
         guide_like_detail=utils.dump(guide_like_detail)
         gather_like_detail=utils.dump(gather_like_detail)
         return like_coll,buss_like_detail,guide_like_detail,gather_like_detail
+
+    def islike(self,user_id,type,like_id):
+        _like = self.coll.find_one({"user_id":user_id})
+        if type =="bussiness":
+            if like_id in _like["buss_like"]:
+                islike ="1"
+            else:
+                islike = "0"
+        if type =="inforgather":
+            if like_id in _like["gather_like"]:
+                islike = "1"
+            else:
+                islike = "0"
+        if type =="inforguide":
+            if like_id in _like["guide_like"]:
+                islike = "1"
+            else:
+                islike = "0"
+        return islike
