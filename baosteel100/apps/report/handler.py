@@ -76,9 +76,77 @@ class NoticeReportHandler(MultiStandardHandler,TokenHandler):
         self.finish(self.result)
 
 
+class PcBusinessReportHandler(MultiStandardHandler,TokenHandler):
+    _model = "report.ReportModel"
+    enable_methods = ["get"]
+    def get(self):
+        time_desc = self.get_argument("time_desc", "all")
+        start_time = self.get_argument("start_time",None)
+        end_time = self.get_argument("end_time",None)
+
+        result = self.model.business_report(time_desc,start_time,end_time)[0]
+        file_names = result["filename"]
+        file_paths = result["file_path"]
+
+        self.set_header('Content-Type', 'application/octet-stream')
+        self.set_header('Content-Disposition', 'attachment; filename=' + file_names[0])
+        with open(file_paths[0], 'rb') as f:
+            while True:
+                data = f.read(1024)
+                if not data:
+                    break
+                self.write(data)
+        self.finish(self.result)
+
+class PcInforgatherReportHandler(MultiStandardHandler,TokenHandler):
+    _model = "report.ReportModel"
+    enable_methods = ["get"]
+
+    def get(self):
+        time_desc = self.get_argument("time_desc", "all")
+        start_time = self.get_argument("start_time", None)
+        end_time = self.get_argument("end_time", None)
+        result = self.model.inforgather_report(time_desc, start_time, end_time)[0]
+        file_names = result["filename"]
+        file_paths = result["file_path"]
+
+        self.set_header('Content-Type', 'application/octet-stream')
+        self.set_header('Content-Disposition', 'attachment; filename=' + file_names[0])
+        with open(file_paths[0], 'rb') as f:
+            while True:
+                data = f.read(1024)
+                if not data:
+                    break
+                self.write(data)
+        self.finish(self.result)
+
+class PcInforguideReportHandler(MultiStandardHandler,TokenHandler):
+    _model = "report.ReportModel"
+    enable_methods = ["get"]
+    def get(self):
+        time_desc = self.get_argument("time_desc", "all")
+        start_time = self.get_argument("start_time", None)
+        end_time = self.get_argument("end_time", None)
+        result = self.model.inforguide_report(time_desc, start_time, end_time)[0]
+        file_names = result["filename"]
+        file_paths = result["file_path"]
+
+        self.set_header('Content-Type', 'application/octet-stream')
+        self.set_header('Content-Disposition', 'attachment; filename=' + file_names[0])
+        with open(file_paths[0], 'rb') as f:
+            while True:
+                data = f.read(1024)
+                if not data:
+                    break
+                self.write(data)
+        self.finish(self.result)
+
 handlers = [
     (r"/business",BusinessReportHandler,get_provider("report_admin")),
     (r"/inforgather",InforgatherReportHandler,get_provider("report_admin")),
     (r"/inforguide",InforguideReportHandler,get_provider("report_admin")),
     (r"/notice",NoticeReportHandler,get_provider("report_admin")),
+    (r"/pc/business",PcBusinessReportHandler,get_provider("report_admin")),
+    (r"/pc/inforgather",PcInforgatherReportHandler,get_provider("report_admin")),
+    (r"/pc/inforguide",PcInforguideReportHandler,get_provider("report_admin")),
 ]
