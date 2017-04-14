@@ -58,11 +58,13 @@ class UserPswResetHandler(MultiStandardHandler,TokenHandler):
 class UserListHandler(MultiStandardHandler,TokenHandler):
     _model = "user.UserModel"
     enable_methods = ['get','post','put','delete']
+    private = False
 
 
 class UserHandler(SingleStandardHanler,TokenHandler):
     _model = "user.UserModel"
     enable_methods = ['get','delete','put']
+    private = False
 
 
 handlers = [
