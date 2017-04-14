@@ -6,6 +6,7 @@ from baosteel100.libs.oauthlib import get_provider
 class LikeHandler(MultiStandardHandler,TokenHandler):
     _model = "like.LikeModel"
     enable_methods = ["put","get"]
+    private = False
 
     def _put(self):
         user_id = self.get_argument("user_id")
@@ -17,6 +18,7 @@ class LikeHandler(MultiStandardHandler,TokenHandler):
 class LikelistHandler(MultiStandardHandler,TokenHandler):
     _model = "like.LikeModel"
     enable_methods = ["get"]
+    private = False
 
     def _get(self):
         user_id = self.get_argument("user_id")
@@ -29,6 +31,7 @@ class LikelistHandler(MultiStandardHandler,TokenHandler):
 class IsLikeHandler(MultiStandardHandler,TokenHandler):
     _model = "like.LikeModel"
     enable_methods = ['get']
+    private = False
 
     def _get(self):
         user_id = self.get_argument("user_id")
