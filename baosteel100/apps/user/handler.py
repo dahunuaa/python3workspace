@@ -26,6 +26,11 @@ class UserLoginHandler(MultiStandardHandler):
         res = self.model.login(mobile,password)
         self.result['data']=res
 
+# class CompleteHandler(MultiStandardHandler,TokenHandler):
+#     _model = "user.UserModel"
+#     def _post(self):
+
+
 class UserPswChangeHandler(MultiStandardHandler,TokenHandler):
     _model = "user.UserModel"
     enable_methods = ['put']
@@ -57,7 +62,7 @@ class UserListHandler(MultiStandardHandler,TokenHandler):
 
 class UserHandler(SingleStandardHanler,TokenHandler):
     _model = "user.UserModel"
-    enable_methods = ['get','delete']
+    enable_methods = ['get','delete','put']
 
 
 handlers = [
@@ -65,6 +70,6 @@ handlers = [
     (r"/login",UserLoginHandler),
     (r'/psw/change',UserPswChangeHandler,get_provider("user")),
     (r'/psw/reset',UserPswResetHandler,get_provider("user_admin")),
-    (r"",UserListHandler,get_provider("user_admin")),
-    (r"/(.*)",UserHandler,get_provider("user_admin"))
+    (r"",UserListHandler,get_provider("user")),
+    (r"/(.*)",UserHandler,get_provider("user"))
 ]

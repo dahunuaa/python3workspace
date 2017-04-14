@@ -10,7 +10,7 @@ name = "baosteel100"
 
 main_apps = [
     "base", "oauth", "scope", "user","business","inforgather","inforguide","feedback","notice","noticeread",
-    "comment","file","msgunread","like","report","sign"
+    "comment","file","msgunread","like","report","sign","reply_comment"
 ]
 
 # oauth_apps = [

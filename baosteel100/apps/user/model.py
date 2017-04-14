@@ -17,7 +17,14 @@ class UserModel(model.StandCURDModel):
         ("email",StrDT()),
         ("login_time",DatetimeDT(default=utils.get_now())),
         ("scope",StrDT(default="normal")),
-        ("job_no",StrDT(required=True))
+        ("job_no",StrDT(required=True)),
+        ("sex",StrDT()),
+        ("tel", StrDT()),
+        ("depart", StrDT()),
+        ("position",StrDT()),
+        ("birthday",StrDT()),
+        ("birthplace",StrDT()),
+        ("marital",StrDT())
     ]
 
     _default_redirect_url = None
