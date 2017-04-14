@@ -24,7 +24,8 @@ class UserModel(model.StandCURDModel):
         ("position",StrDT()),
         ("birthday",StrDT()),
         ("birthplace",StrDT()),
-        ("marital",StrDT())
+        ("marital",StrDT()),
+        ("entryday",StrDT())
     ]
 
     _default_redirect_url = None
