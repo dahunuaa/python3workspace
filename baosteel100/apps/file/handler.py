@@ -4,7 +4,7 @@ from baosteel100.libs.oauthlib import get_provider
 import time
 import os
 import baosteel100
-
+import baosteel100.libs.utils as utils
 def get_root_path():
     return os.path.dirname(os.path.abspath(baosteel100.__file__))
 
@@ -23,7 +23,8 @@ class UploadFileHandler(MultiStandardHandler,TokenHandler):
         file_metas=self.request.files['file']
         for meta in file_metas:
             filename=meta['filename']
-            filepath=os.path.join(upload_path,filename)
+            newfilename=self.user_id+'_'+str(utils.get_local_timestamp())
+            filepath=os.path.join(upload_path,newfilename)
             file = {
                 "file_name" :filename,
                 "file_path":filepath,
@@ -32,7 +33,7 @@ class UploadFileHandler(MultiStandardHandler,TokenHandler):
             }
             self.coll.save(file)
             #有些文件需要已二进制的形式存储，实际中可以更改
-            write_path = relative_path+filename
+            write_path = relative_path+newfilename
             with open(write_path,'wb') as up:
                 up.write(meta['body'])
         self.result["data"] = {"file_name":filename,"file_path":filepath}
