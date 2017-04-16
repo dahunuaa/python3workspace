@@ -21,6 +21,7 @@ class UserModel(model.StandCURDModel):
         ("sex",StrDT()),
         ("tel", StrDT()),
         ("depart", StrDT()),
+        ("gongzuozu", StrDT()),
         ("position",StrDT()),
         ("birthday",StrDT()),
         ("birthplace",StrDT()),
