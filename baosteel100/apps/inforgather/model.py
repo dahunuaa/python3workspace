@@ -13,6 +13,7 @@ class InforgatherModel(model.StandCURDModel):
         ("gather_oilfield", StrDT(required=True)),
         ("gather_text", StrDT(required=True)),
         ("images_list", ListDT()),
+        ("key_words_list",ListDT()),
         ("filename",StrDT()),
         ("filepath", StrDT()),
     ]

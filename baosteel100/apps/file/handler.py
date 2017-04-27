@@ -24,7 +24,7 @@ class UploadFileHandler(MultiStandardHandler,TokenHandler):
         for meta in file_metas:
             filename=meta['filename']
             newfilename=self.user_id+'_'+str(utils.get_local_timestamp())
-            filepath=os.path.join(upload_path,newfilename)
+            filepath=os.path.join(upload_path,filename)#将filename改为newfilename
             file = {
                 "file_name" :filename,
                 "file_path":filepath,
@@ -33,14 +33,48 @@ class UploadFileHandler(MultiStandardHandler,TokenHandler):
             }
             self.coll.save(file)
             #有些文件需要已二进制的形式存储，实际中可以更改
-            write_path = relative_path+newfilename
+            write_path = relative_path+filename#将filename改为newfilename
             with open(write_path,'wb') as up:
                 up.write(meta['body'])
         self.result["data"] = {"file_name":filename,"file_path":filepath}
         self.finish(self.result)#此处用self.result['data']形式，回调函数是json类型，如果直接是result，回调函数的数据类型是text
 
+class DownloadFilesHandler(TokenHandler,MultiStandardHandler):
+    _model = "file.FileModel"
+    def get(self):
+        path = get_root_path() + '/static/ftp/file/'
+        zip_name = os.path.join(get_root_path()+'/static/ftp/wenjian_'+time.strftime("%Y%m%d") + '.zip')
+        utils.zip_folder(path,zip_name)
+        self.set_header('Content-Type', 'application/octet-stream')
+        self.set_header('Content-Disposition', 'attachment; filename=' + os.path.split(zip_name)[1])
+        with open(zip_name, 'rb') as f:
+            while True:
+                data = f.read(1024)
+                if not data:
+                    break
+                self.write(data)
+        os.remove(zip_name)
+        self.finish()
 
+class DownloadImagesHandler(TokenHandler,MultiStandardHandler):
+    _model = "file.FileModel"
+    def get(self):
+        path = get_root_path() + '/static/ftp/image/'
+        zip_name = os.path.join(get_root_path()+'/static/ftp/tuku_'+time.strftime("%Y%m%d") + '.zip')
+        utils.zip_folder(path,zip_name)
+        self.set_header('Content-Type', 'application/octet-stream')
+        self.set_header('Content-Disposition', 'attachment; filename=' + os.path.split(zip_name)[1])
+        with open(zip_name, 'rb') as f:
+            while True:
+                data = f.read(1024)
+                if not data:
+                    break
+                self.write(data)
+        os.remove(zip_name)
+        self.finish()
 
 handlers = [
-    (r"/upload",UploadFileHandler,get_provider("file"))
+    (r"/upload",UploadFileHandler,get_provider("file")),
+    (r"/download/images",DownloadImagesHandler,get_provider("file")),
+    (r"/download/files",DownloadFilesHandler,get_provider("file")),
 ]
