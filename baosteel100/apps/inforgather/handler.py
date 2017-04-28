@@ -25,9 +25,19 @@ class InforgatherClassifyHandler(MultiStandardHandler,TokenHandler):
         self.result["data"] = self.model.classify()
         self.finish(self.result)
 
+class KeywordRankHandler(MultiStandardHandler,TokenHandler):
+    _model = "inforgather.InforgatherModel"
+    enable_methods = ["get"]
+    private = False
+
+    def _get(self):
+        result = self.model.key_words_rank()
+        self.result["data"]=result
+
 handlers = [
     (r"",InforgatherListHandler,get_provider("inforgather")),
     (r"/classify",InforgatherClassifyHandler,get_provider("inforgather")),
+    (r"/keywordrank",KeywordRankHandler,get_provider("inforgather")),
     (r"/(.*)",InforgatherHandler,get_provider("inforgather"))
 ]
 

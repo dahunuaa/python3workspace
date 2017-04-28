@@ -20,6 +20,7 @@ class InforgatherModel(model.StandCURDModel):
 
     def __init__(self):
         self.user_coll = model.BaseModel.get_model("user.UserModel").get_coll()
+        self.keywords_coll=model.BaseModel.get_model("keywords.KeyWordsModel").get_coll()
         super(InforgatherModel, self).__init__()
 
     def before_create(self,object):
@@ -30,6 +31,9 @@ class InforgatherModel(model.StandCURDModel):
         del object['images_list']
         object['images'] = images
         self.coll.save(object)
+        if len(object['key_words_list']):
+            for i in object['key_words_list']:
+                self.keywords_coll.insert({"author_name":user['name'],"author_id":user['job_no'],"keyword":i})
         return object
 
     def save_images(self,add_user_jobno,images_list):
@@ -89,6 +93,11 @@ class InforgatherModel(model.StandCURDModel):
         xinjiang_count=self.coll.find({"gather_area":"新疆"}).count()
         result = {"dongbei":dongbei_count,"xinan":xinan_count,"zhonghaiyou":zhonghaiyu_count,
                  "huabei": huabei_count,"huazhong":huazhong_count,"huadong":huadong_count,"xinjiang":xinjiang_count}
+        return result
+
+    def key_words_rank(self):
+        result = utils.dump(self.coll.aggregate([{"$group":{"_id":"$key_words_list",
+                                                            "num":{"$sum":1}}}]))
         return result
 
 

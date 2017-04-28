@@ -31,6 +31,7 @@ class BusinessOilfieldRankHandler(MultiStandardHandler,TokenHandler):
         res = self.model.oilfield_buss_rank()
         self.result["data"]=res
 
+
 handlers = [
     (r"",BusinessListHandler,get_provider("business")),
     (r"/usersrank",BusinessUsersRankHandler,get_provider("business")),
