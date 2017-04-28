@@ -51,6 +51,21 @@ class BusinessModel(model.StandCURDModel):
         msgunread = msgunread_coll.find_one({"user_id":user_mobile["mobile"]})
         return msgunread
 
+    def users_buss_rank(self):
+        result=utils.dump(self.coll.aggregate([{"$group":{"_id":"$add_user_id",
+                                                          "name":{"$last":"$add_user_name"},#添加额外字段
+                                                          "num":{"$sum":1}}},
+                                               ]))
+        return result
+
+    def oilfield_buss_rank(self):
+        result=utils.dump(self.coll.aggregate([{"$group":{"_id":"$business_place",
+                                                          "num":{"$sum":1},
+                                                          }},
+                                               {"$sort":{"num":-1},}
+                                               ]))
+        return result
+
 
 
 

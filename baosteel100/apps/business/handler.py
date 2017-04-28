@@ -15,10 +15,27 @@ class BusinessHandler(SingleStandardHanler,TokenHandler):
     _model = "business.BusinessModel"
     enable_methods = ["get","put","delete"]
 
+class BusinessUsersRankHandler(MultiStandardHandler,TokenHandler):
+    _model = "business.BusinessModel"
+    enable_methods = ["get"]
+    private = False
+    def _get(self):
+        res=self.model.users_buss_rank()
+        self.result["data"]=res
 
+class BusinessOilfieldRankHandler(MultiStandardHandler,TokenHandler):
+    _model = "business.BusinessModel"
+    enable_methods = ["get"]
+    private = False
+    def _get(self):
+        res = self.model.oilfield_buss_rank()
+        self.result["data"]=res
 
 handlers = [
     (r"",BusinessListHandler,get_provider("business")),
+    (r"/usersrank",BusinessUsersRankHandler,get_provider("business")),
+    (r"/oilfieldrank",BusinessOilfieldRankHandler,get_provider("business")),
     (r"/(.*)",BusinessHandler,get_provider("business")),
+
 
 ]
