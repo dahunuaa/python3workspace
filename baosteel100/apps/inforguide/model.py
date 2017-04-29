@@ -73,13 +73,18 @@ class InforguideModel(model.StandCURDModel):
         return msgunread
 
     def classify(self):
-        bijixiaojie_count = self.coll.find({"guide_type":"笔记小结"}).count()
-        yonghuxinxi_count = self.coll.find({"guide_type":"用户信息"}).count()
-        chanpinxinxi_count = self.coll.find({"guide_type": "产品信息"}).count()
-        hangyexinxi_count = self.coll.find({"guide_type": "行业信息"}).count()
-        gongsixinwen_count = self.coll.find({"guide_type": "公司新闻"}).count()
-        result = {"bijixiaojie":bijixiaojie_count,"yonghuxinxi":yonghuxinxi_count,"chanpinxinxi":chanpinxinxi_count,
-                  "hangyexinxi":hangyexinxi_count,"gongsixinwen":gongsixinwen_count}
+        result = utils.dump(self.coll.aggregate([{"$group":{"_id":"$guide_type",
+                                                    "num":{"$sum":1}}},
+                                                  {"$sort":{"num":-1}}
+                                                  ]))
+
+        # bijixiaojie_count = self.coll.find({"guide_type":"笔记小结"}).count()
+        # yonghuxinxi_count = self.coll.find({"guide_type":"用户信息"}).count()
+        # chanpinxinxi_count = self.coll.find({"guide_type": "产品信息"}).count()
+        # hangyexinxi_count = self.coll.find({"guide_type": "行业信息"}).count()
+        # gongsixinwen_count = self.coll.find({"guide_type": "公司新闻"}).count()
+        # result = {"bijixiaojie":bijixiaojie_count,"yonghuxinxi":yonghuxinxi_count,"chanpinxinxi":chanpinxinxi_count,
+        #           "hangyexinxi":hangyexinxi_count,"gongsixinwen":gongsixinwen_count}
         return result
 
 
