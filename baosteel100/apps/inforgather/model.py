@@ -32,8 +32,9 @@ class InforgatherModel(model.StandCURDModel):
         object['images'] = images
         self.coll.save(object)
         if len(object['key_words_list']):
-            for i in object['key_words_list']:
-                self.keywords_coll.insert({"author_name":user['name'],"author_id":user['job_no'],"keyword":i})
+                for i in object['key_words_list']:
+                    if i:
+                        self.keywords_coll.insert({"author_name": user['name'], "author_id": user['job_no'], "keyword": i})
         return object
 
     def save_images(self,add_user_jobno,images_list):
