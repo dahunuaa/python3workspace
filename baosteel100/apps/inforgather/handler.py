@@ -34,10 +34,24 @@ class KeywordRankHandler(MultiStandardHandler,TokenHandler):
         result = self.model.key_words_rank()
         self.result["data"]=result
 
+class BussGatherinfoHandler(MultiStandardHandler,TokenHandler):
+    _model = "inforgather.InforgatherModel"
+    enable_methods = ["get"]
+    private = False
+
+    def _get(self):
+        editor_id = self.get_argument("editor_id")
+        buss_start_time=self.get_argument("buss_start_time")
+        buss_end_time=self.get_argument("buss_end_time")
+        res = self.model.search_gather_duringbuss(editor_id,buss_start_time,buss_end_time)
+        self.result["data"]=res
+
+
 handlers = [
     (r"",InforgatherListHandler,get_provider("inforgather")),
     (r"/classify",InforgatherClassifyHandler,get_provider("inforgather")),
     (r"/keywordrank",KeywordRankHandler,get_provider("inforgather")),
+    (r"/bussgather",BussGatherinfoHandler,get_provider("inforgather")),
     (r"/(.*)",InforgatherHandler,get_provider("inforgather"))
 ]
 

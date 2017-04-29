@@ -101,6 +101,18 @@ class InforgatherModel(model.StandCURDModel):
                                                             "num":{"$sum":1}}}]))
         return result
 
+    def search_gather_duringbuss(self,editor_id,buss_start_time,buss_end_time):
+        query_params={}
+        query_params.update({
+            "add_user_id":editor_id,
+            "add_time":{
+                "$gte":utils.strtodatetime(buss_start_time,'%Y-%m-%d %H:%M:%S'),
+                "$lte":utils.strtodatetime(buss_end_time,'%Y-%m-%d %H:%M:%S')
+            }
+        })
+        res = utils.dump(self.coll.find(query_params))
+        return res
+
 
 
 
