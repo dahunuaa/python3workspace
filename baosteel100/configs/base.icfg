@@ -24,7 +24,7 @@ xsrf_cookies : False
 SIGN_KEY : '87B2447B04E5AA93F00C21A5B98F32A0'
 
 #DEFAUT SETTING
-default_expired_time : 24
+default_expired_time : 24 * 365
 enable_ssl : False
 
 #HEADER SIZE
