@@ -24,10 +24,17 @@ class InforguideClassifyHandler(MultiStandardHandler,TokenHandler):
         self.result["data"] = self.model.classify()
         self.finish(self.result)
 
+class InforguideUpdateHandler(MultiStandardHandler,TokenHandler):
+    _model = "inforguide.InforguideModel"
+    enable_methods = ["get"]
+    private = False
+    def _get(self):
+        self.model.update()
 
 handlers = [
     (r"",InforguideListHandler,get_provider("inforguide")),
     (r"/classify",InforguideClassifyHandler,get_provider("inforguide")),
+    # (r"/update",InforguideUpdateHandler,get_provider("inforguide")),
     (r"/(.*)",InforguideHandler,get_provider("inforguide"))
 ]
 

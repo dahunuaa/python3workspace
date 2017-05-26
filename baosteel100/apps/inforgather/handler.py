@@ -46,12 +46,19 @@ class BussGatherinfoHandler(MultiStandardHandler,TokenHandler):
         res = self.model.search_gather_duringbuss(editor_id,buss_start_time,buss_end_time)
         self.result["data"]=res
 
+class BussUpdateHandler(MultiStandardHandler,TokenHandler):
+    _model = "inforgather.InforgatherModel"
+    enable_methods = ["get"]
+    private = False
+    def _get(self):
+        self.model.update()
 
 handlers = [
     (r"",InforgatherListHandler,get_provider("inforgather")),
     (r"/classify",InforgatherClassifyHandler,get_provider("inforgather")),
     (r"/keywordrank",KeywordRankHandler,get_provider("inforgather")),
     (r"/bussgather",BussGatherinfoHandler,get_provider("inforgather")),
+    # (r"/update",BussUpdateHandler,get_provider("inforgather")),
     (r"/(.*)",InforgatherHandler,get_provider("inforgather"))
 ]
 

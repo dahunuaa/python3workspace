@@ -6,27 +6,27 @@ scope_roles:['superuser','scope','normal',
              'user','business','inforgather','feedback','notice','noticeread','user_admin','business_admin',
              'inforgather_admin','inforguide','inforguide_admin','feedback_admin','notice_admin','noticeread_admin',
              'comment','comment_admin','file','file_admin','msgunread','msgunread_admin','like','like_admin','report',
-             'report_admin','sign','sign_admin','reply_comment','keywords','evalute'
+             'report_admin','sign','sign_admin','reply_comment','keywords','evalute','scapy'
              ]
 
 init_scope:{
 "normal":{
         "name":"normal",
         "roles":['user','business','inforgather','inforguide','feedback''notice','noticeread','comment','file','msgunread','msgunread_admin',
-                'like','report','sign','reply_comment','keywords']
+                'like','report','sign','reply_comment','keywords','scapy']
         },
 "backend":{
         "name":"backend",
         "roles":['user','business','business_admin','inforgather_admin','inforgather','inforguide','inforguide_admin',
         'feedback','feedback_admin','notice','notice_admin','noticeread','noticeread_admin','comment','comment_admin',
         'file','file_admin','msgunread','msgunread_admin','like','like_admin','report','report_admin','sign','sign_admin','reply_comment'
-        'keywords','evalute']
+        'keywords','evalute','scapy']
         },
 "admin":{
         "name":"admin",
         "roles":['superuser','user','user_admin','business','business_admin','inforgather','inforgather_admin','inforguide',
         'inforguide_admin','feedback','feedback_admin','notice','notice_admin','noticeread','noticeread_admin','comment','comment_admin',
         'file','file_admin','msgunread','msgunread_admin','like','like_admin','report','report_admin','sign','sign_admin','reply_comment',
-        'keywords','evalute']
+        'keywords','evalute','scapy']
         }
   }

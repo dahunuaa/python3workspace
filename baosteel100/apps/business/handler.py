@@ -31,11 +31,19 @@ class BusinessOilfieldRankHandler(MultiStandardHandler,TokenHandler):
         res = self.model.oilfield_buss_rank()
         self.result["data"]=res
 
+class BusinessUpdateHandler(MultiStandardHandler,TokenHandler):
+    _model = "business.BusinessModel"
+    enable_methods = ["get"]
+    private = False
+    def _get(self):
+        res = self.model.update()
+        self.result["data"] = res
 
 handlers = [
     (r"",BusinessListHandler,get_provider("business")),
     (r"/usersrank",BusinessUsersRankHandler,get_provider("business")),
     (r"/oilfieldrank",BusinessOilfieldRankHandler,get_provider("business")),
+    # (r"/update",BusinessUpdateHandler,get_provider("business")),
     (r"/(.*)",BusinessHandler,get_provider("business")),
 
 

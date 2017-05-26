@@ -87,5 +87,11 @@ class InforguideModel(model.StandCURDModel):
         #           "hangyexinxi":hangyexinxi_count,"gongsixinwen":gongsixinwen_count}
         return result
 
+    def update(self):
+        res = utils.dump(self.coll.find())
+        for i in res:
+            i["add_time"] = utils.strtodatetime(i["add_time"], '%Y-%m-%d %H:%M:%S')
+            i["last_updated_time"] = utils.strtodatetime(i["last_updated_time"], '%Y-%m-%d %H:%M:%S')
+            self.coll.save(i)
 
 
