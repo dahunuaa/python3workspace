@@ -386,6 +386,19 @@ def str_to_img(uri, string, url=None):
     f.close()
     return url
 
+def family_str_to_img(uri, string, url=None):
+    if url == None:
+        url = '/static/ftp/family/' + uri
+
+    img_data = base64.b64decode(string)
+    path_url = get_root_path() + url
+    if not os.path.exists(os.path.dirname(path_url)):
+        os.makedirs(os.path.dirname(path_url))
+    f = open(path_url, "wb")
+    f.write(img_data)
+    f.close()
+    return url
+
 
 def compare_time(dt1, dt2):
     if dt1 > dt2:

@@ -1,5 +1,7 @@
 from urllib import request
 import re
+from bs4 import BeautifulSoup
+from bs4 import BeautifulStoneSoup
 
 #获取宝武钢铁新闻的主页
 def get_baowu_mainpage():
@@ -118,6 +120,115 @@ def get_detail_shougang_news():
         single_detai_news=re.findall(pattern,news_page)
         detail_news.append([i[1],single_detai_news])
     return detail_news
+
+# 获取宣化和张家口天气
+def get_weather():
+    url = "http://www.weather.com.cn/weather/101090302.shtml"
+    html = request.urlopen(url).read()
+    soup = BeautifulSoup(html,'html.parser')
+    content_html = soup.find("ul",{"class":"t clearfix"})
+    detail_day = content_html.findAll("h1")
+    detail_wea = content_html.findAll("p",{"class":"wea"})
+    pattern = re.compile(r'<span>(.*?)</span>/<i>(.*?)℃</i>')
+    html = html.decode('utf-8')
+    detail_tem_pretty = re.findall(pattern,html)
+    detail_wins=content_html.findAll("i")
+    weather=[]
+    for i in range(0,7):
+        weather.append([detail_day[i].text,detail_wea[i].text,detail_tem_pretty[i],detail_wins[2*i+1].text])
+        #返回的分别是日期、天气、气温、风力
+
+    z_url = "http://www.weather.com.cn/weather/101090301.shtml"
+    z_html = request.urlopen(z_url).read()
+    z_soup = BeautifulSoup(z_html, 'html.parser')
+    z_content_html = z_soup.find("ul", {"class": "t clearfix"})
+    z_detail_day = z_content_html.findAll("h1")
+    z_detail_wea = z_content_html.findAll("p", {"class": "wea"})
+    z_pattern = re.compile(r'<span>(.*?)</span>/<i>(.*?)℃</i>')
+    z_html = z_html.decode('utf-8')
+    z_detail_tem_pretty = re.findall(z_pattern, z_html)
+    z_detail_wins = z_content_html.findAll("i")
+    z_weather = []
+    for j in range(0, 7):
+        z_weather.append([z_detail_day[j].text, z_detail_wea[j].text, z_detail_tem_pretty[j], z_detail_wins[2 * j + 1].text])
+
+    return weather,z_weather
+
+# 获取央视网主页banner图新闻，信息依次为标题，图片，详情
+def get_cctv_mainnews():
+    url ='http://news.cctv.com/'
+    html = request.urlopen(url).read()
+    html = html.decode('utf-8')
+    soup = BeautifulSoup(html,'html.parser')
+    content_html = soup.find("div",{"id":"pics_show"})
+    img= content_html.findAll("img")
+    title = content_html.findAll("h3")
+    banner_news=[]
+    for i in range(len(title)):
+        banner_news.append([title[i].contents[0].text,img[i].attrs["class"],title[i].contents[0].attrs["href"]])
+    return banner_news
+
+
+# 获取央视网食疗养生新闻
+def get_yangsheng_news():
+    url='http://food.cctv.com/yangsheng/index.shtml'
+    html = request.urlopen(url).read()
+    soup = BeautifulSoup(html,'html.parser')
+    news = soup.find_all("li",{"class":""},limit=5)
+    yangsheng_news=[]
+    for i in range(len(news)):
+        yangsheng_news.append([news[i].contents[1].text.replace("\r\n",""),news[i].contents[0].text,news[i].contents[1].attrs["href"]])
+    return yangsheng_news
+
+
+# 获取央视网减肥瘦身新闻
+def get_jianfei_news():
+    url = 'http://food.cctv.com/jianfei/index.shtml'
+    html = request.urlopen(url).read()
+    soup = BeautifulSoup(html,'html.parser')
+    news = soup.find_all("li",{"class":""},limit=5)
+    jianfei_news =[]
+    for i in range(len(news)):
+        jianfei_news.append([news[i].contents[1].text.replace("\r\n",""),news[i].contents[0].text,news[i].contents[1].attrs["href"]])
+    return jianfei_news
+
+
+# 获取央视网厨房小百科新闻
+def get_chufang_news():
+    url = 'http://food.cctv.com/baike/index.shtml'
+    html = request.urlopen(url).read()
+    soup = BeautifulSoup(html, 'html.parser')
+    news = soup.find_all("li", {"class": ""}, limit=5)
+    chufang_news = []
+    for i in range(len(news)):
+        chufang_news.append(
+            [news[i].contents[1].text.replace("\r\n", ""), news[i].contents[0].text, news[i].contents[1].attrs["href"]])
+    return chufang_news
+
+#获取新闻详细消息
+
+def get_detail_news(url):
+    html = request.urlopen(url).read()
+    soup = BeautifulSoup(html,'html.parser')
+    origin_news=soup.find("div",{"class":"cnt_bd"})
+    news = origin_news.findAll("p",{"class":"","align":""})
+    img = origin_news.findAll("p",{"align":"center"})
+    text_news =[]
+    for i in range(len(news)):
+        text_news.append(news[i].text)
+    img_news=[]
+    for j in range(len(img)):
+        img_news.append(img[j].contents[0].attrs["src"])
+    return text_news,img_news
+
+
+
+
+
+
+
+
+
 
 
 
