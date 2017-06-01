@@ -68,14 +68,15 @@ class GetDetailNewsHandler(APIHandler):
     def get(self):
         url=self.get_argument("url")
         result = get_detail_news(url)
-        self.result["data"]={"text_news":result[0],"img_news":result[1]}
+        # self.result["data"]={"text_news":result[0],"img_news":result[1]}
+        self.result["data"]=result
         self.finish(self.result)
 
 handlers=[
     (r"/baowu/news",GetBaoWuNewsHandler),
     (r"/baowu/price",GetBaoWuPriceHandler),
     (r"/shougang/news",GetShouGangeHandler),
-    (r"/weather/xuanhua",GetWeatherXuanhuaHandler),
+    (r"/weather",GetWeatherXuanhuaHandler),
     (r"/cctv_news",GetCctvNewsHandler),
     (r"/yangsheng_news",GetYangshengHandler),
     (r"/jianfei_news",GetJianfeiHandler),

@@ -2,6 +2,7 @@ from urllib import request
 import re
 from bs4 import BeautifulSoup
 from bs4 import BeautifulStoneSoup
+import baosteel100.libs.utils as utils
 
 #获取宝武钢铁新闻的主页
 def get_baowu_mainpage():
@@ -133,9 +134,11 @@ def get_weather():
     html = html.decode('utf-8')
     detail_tem_pretty = re.findall(pattern,html)
     detail_wins=content_html.findAll("i")
+    today_tem = content_html.findAll("i",limit=1)
     weather=[]
-    for i in range(0,7):
-        weather.append([detail_day[i].text,detail_wea[i].text,detail_tem_pretty[i],detail_wins[2*i+1].text])
+    weather.append([detail_day[0].text,detail_wea[0].text,today_tem[0].text,detail_wins[1].text])
+    for i in range(1,7):
+        weather.append([detail_day[i].text,detail_wea[i].text,detail_tem_pretty[i-1],detail_wins[2*i+1].text])
         #返回的分别是日期、天气、气温、风力
 
     z_url = "http://www.weather.com.cn/weather/101090301.shtml"
@@ -148,11 +151,15 @@ def get_weather():
     z_html = z_html.decode('utf-8')
     z_detail_tem_pretty = re.findall(z_pattern, z_html)
     z_detail_wins = z_content_html.findAll("i")
+    z_today_tem = content_html.findAll("i", limit=1)
     z_weather = []
-    for j in range(0, 7):
-        z_weather.append([z_detail_day[j].text, z_detail_wea[j].text, z_detail_tem_pretty[j], z_detail_wins[2 * j + 1].text])
+    z_weather.append([z_detail_day[0].text, z_detail_wea[0].text, z_today_tem[0].text, z_detail_wins[1].text])
+    for j in range(1, 7):
+        z_weather.append([z_detail_day[j].text, z_detail_wea[j].text, z_detail_tem_pretty[j-1], z_detail_wins[2 * j + 1].text])
 
     return weather,z_weather
+
+get_weather()
 
 # 获取央视网主页banner图新闻，信息依次为标题，图片，详情
 def get_cctv_mainnews():
@@ -211,15 +218,24 @@ def get_detail_news(url):
     html = request.urlopen(url).read()
     soup = BeautifulSoup(html,'html.parser')
     origin_news=soup.find("div",{"class":"cnt_bd"})
-    news = origin_news.findAll("p",{"class":"","align":""})
-    img = origin_news.findAll("p",{"align":"center"})
-    text_news =[]
-    for i in range(len(news)):
-        text_news.append(news[i].text)
-    img_news=[]
-    for j in range(len(img)):
-        img_news.append(img[j].contents[0].attrs["src"])
-    return text_news,img_news
+    # news = origin_news.findAll("p",{"class":"","align":""})
+    # img = origin_news.findAll("p",{"align":"center"})
+    # text_news =[]
+    # for i in range(len(news)):
+    #     text_news.append(news[i].text)
+    # img_news=[]
+    # for j in range(len(img)):
+    #     img_news.append(img[j].contents[0].attrs["src"])
+    # return text_news,img_news
+
+    tem_news = origin_news.findAll("p", {"classs": ""})
+    del tem_news[0]
+    final_news=[]
+    for i in range(len(tem_news)):
+        final_news.append(str(tem_news[i]))
+    return final_news
+
+# print(get_detail_news("http://food.cctv.com/2017/05/29/ARTIejIhGha1t77gKDVLWBZP170529.shtml"))
 
 
 
